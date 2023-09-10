@@ -3,8 +3,8 @@ import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import config from "./src/config/config";
 import connectDB from "./src/config/db";
+import { ErrorMiddleware } from "./src/middlewares/error";
 import successRes from "./src/utils/SuccessRes";
-import errorHandler from "./src/utils/errorHandler";
 
 export const app = express();
 
@@ -32,16 +32,13 @@ app.get("/", (req: Request, res: Response) => {
       message: "Test successfully",
       data: "This is Data",
     });
-  } catch (error) {
-    errorHandler(res, {
-      message: "Somthing is wrong",
-      statusCode: 501,
-      success: false,
-    });
-  }
+  } catch (error) {}
 });
 
 //not found
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   res.status(404).sendFile(__dirname + "/views/error.html");
 });
+
+//error handler
+app.use(ErrorMiddleware);

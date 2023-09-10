@@ -1,13 +1,12 @@
-import { Response } from "express";
+class ErrorHandler extends Error {
+  statusCode: Number;
 
-import { errorHandler } from "../types/errorHandler";
+  constructor(message: any, statusCode: Number) {
+    super(message);
+    this.statusCode = statusCode;
 
-const errorHandler = (res: Response, error: errorHandler) => {
-  res.status(error.statusCode).json({
-    success: false,
-    message: error.message,
-    error: error.error,
-  });
-};
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
 
-export default errorHandler;
+export default ErrorHandler;

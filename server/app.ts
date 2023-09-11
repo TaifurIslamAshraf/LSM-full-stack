@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
+import path from "path";
 import config from "./src/config/config";
 import connectDB from "./src/config/db";
 import { ErrorMiddleware } from "./src/middlewares/error";
@@ -13,6 +14,7 @@ connectDB();
 
 //set view engine to ejs
 app.set("view engine", "ejs");
+app.use(express.static(__dirname + "views"));
 
 //body parser
 app.use(express.json());
@@ -37,7 +39,7 @@ app.get("/", (req: Request, res: Response) => {
 
 //not found
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
-  res.status(404).sendFile(__dirname + "/views/error.html");
+  res.status(404).sendFile(path.join(__dirname + "/views/error.html"));
 });
 
 //error handler

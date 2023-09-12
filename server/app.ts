@@ -2,10 +2,13 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import path from "path";
+
 import config from "./src/config/config";
 import connectDB from "./src/config/db";
 import { ErrorMiddleware } from "./src/middlewares/error";
 import successRes from "./src/utils/SuccessRes";
+
+import userRouter from "./src/routes/user.route";
 
 export const app = express();
 
@@ -14,7 +17,6 @@ connectDB();
 
 //set view engine to ejs
 app.set("view engine", "ejs");
-app.use(express.static(__dirname + "views"));
 
 //body parser
 app.use(express.json());
@@ -25,6 +27,9 @@ app.use(cookieParser());
 
 //cors
 app.use(cors({ origin: config.origin }));
+
+//all routes
+app.use("/api", userRouter);
 
 //test route
 app.get("/", (req: Request, res: Response) => {

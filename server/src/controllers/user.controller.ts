@@ -2,6 +2,7 @@ import ejs from "ejs";
 import { NextFunction, Request, Response } from "express";
 
 import path from "path";
+import config from "../config/config";
 import { createActivationToken } from "../helpers/activationToken";
 import sendMail from "../helpers/sendMail";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
@@ -12,6 +13,8 @@ import ErrorHandler from "../utils/errorHandler";
 export const registerUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log(config);
+
       //get data from body
       const { name, email, password, avater } = req.body;
 

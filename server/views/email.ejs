@@ -28,6 +28,9 @@
         background-color: #e2e2e2;
         display: block;
       }
+      img {
+        margin: auto;
+      }
 
       ul {
         margin: 0;
@@ -63,6 +66,7 @@
       }
 
       .password-button {
+        text-align: center;
         background-color: #0da487;
         border: none;
         color: #fff;
@@ -155,7 +159,14 @@
               <thead>
                 <tr style="display: block">
                   <td style="display: block">
-                    <h3 style="font-weight: 700; font-size: 20px; margin: 0">
+                    <h3
+                      style="
+                        font-weight: 700;
+                        font-size: 20px;
+                        margin: 0;
+                        text-align: center;
+                      "
+                    >
                       Activate Your Account
                     </h3>
                   </td>
@@ -168,9 +179,10 @@
                         margin: 0;
                         color: #939393;
                         margin-top: 15px;
+                        text-align: center;
                       "
                     >
-                      Hello <%= data.user.name %>
+                      Hello <%= user.name %>
                     </h3>
                   </td>
 
@@ -203,9 +215,11 @@
               width="100%"
             >
               <thead>
-                <tr style="display: block">
-                  <td style="display: block">
-                    <h2 class="password-button"><%= data.activationCode %></h2>
+                <tr style="display: block; text-align: center">
+                  <td style="display: block; text-align: center">
+                    <h2 style="text-align: center" class="password-button">
+                      <%= activationCode %>
+                    </h2>
                   </td>
                 </tr>
               </thead>

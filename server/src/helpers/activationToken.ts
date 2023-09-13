@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { v4 as uuid } from "uuid";
 
 import config from "../config/config";
 import { IActivationInfo } from "../types/user.controller";
@@ -12,13 +11,13 @@ export interface IActivationToken {
 export const createActivationToken = (
   user: IActivationInfo
 ): IActivationToken => {
-  const activationCode = uuid();
+  const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
   const token = jwt.sign(
     {
       user,
       activationCode,
     },
-    config.activationToken,
+    config.activationSecret,
     {
       expiresIn: "5m",
     }

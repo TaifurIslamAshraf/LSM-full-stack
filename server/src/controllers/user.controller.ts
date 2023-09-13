@@ -1,5 +1,6 @@
 import ejs from "ejs";
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 import path from "path";
 import config from "../config/config";
@@ -7,16 +8,14 @@ import { createActivationToken } from "../helpers/activationToken";
 import sendMail from "../helpers/sendMail";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import userModel from "../models/user.model";
-import { IActivationInfo } from "../types/user.controller";
+import { IActivationInfo, IActivationRequest } from "../types/user.controller";
 import ErrorHandler from "../utils/errorHandler";
 
 export const registerUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(config);
-
       //get data from body
-      const { name, email, password, avater } = req.body;
+      const { name, email, password, avatar } = req.body;
 
       //is Exist email
       const isExist = await userModel.exists({ email });
@@ -28,6 +27,8 @@ export const registerUser = CatchAsyncError(
       const activationInfo: IActivationInfo = {
         name,
         email,
+        password,
+        avatar,
       };
       const { token, activationCode } = createActivationToken(activationInfo);
 
@@ -38,7 +39,7 @@ export const registerUser = CatchAsyncError(
 
       const html = await ejs.renderFile(
         path.join(__dirname, "../../views/email.ejs"),
-        { data }
+        data
       );
 
       try {
@@ -57,6 +58,55 @@ export const registerUser = CatchAsyncError(
       } catch (error: any) {
         return next(new ErrorHandler(error.message, 400));
       }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+//activate user
+export const activateUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { activation_token, activation_code }: IActivationRequest =
+        req.body;
+
+      if (!activation_code && !activation_token) {
+        return next(new ErrorHandler("all field are required", 400));
+      }
+
+      //veryfy token and get user info
+      const newUser: { user: IActivationInfo; activationCode: string } =
+        jwt.verify(activation_token, config.activationSecret) as {
+          user: IActivationInfo;
+          activationCode: string;
+        };
+
+      if (newUser.activationCode !== activation_code) {
+        return next(new ErrorHandler("Invalid activation code", 400));
+      }
+
+      //user data save in database
+      const { name, email, password, avatar } = newUser.user;
+
+      const existUser = await userModel.exists({ email });
+
+      if (existUser) {
+        return next(new ErrorHandler("User alredy exist", 400));
+      }
+
+      const user = await userModel.create({
+        name,
+        email,
+        password,
+        avatar,
+      });
+
+      res.status(201).json({
+        success: true,
+        message: "User registretion success",
+        user,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }

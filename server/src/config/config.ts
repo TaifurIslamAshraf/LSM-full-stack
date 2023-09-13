@@ -14,7 +14,7 @@ const config = {
   cloudApiSecret: process.env.CLOUD_API_SECRET,
 
   jwtSecret: process.env.JWT_SECRET as string,
-  activationToken: process.env.ACTIVATION_TOKEN as string,
+  activationSecret: process.env.ACTIVATION_SECRET as string,
 
   smtpHost: process.env.SMTP_HOST,
   smtpPort: parseInt(process.env.SMTP_PORT || "587"),

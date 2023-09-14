@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import mongoose, { Model, Schema } from "mongoose";
+import config from "../config/config";
 import { IUser } from "../types/user.model";
 
 const emailRegexValidtor: RegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
@@ -60,12 +62,22 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-//compare password
+//access token generate
+userSchema.methods.accessToken = function () {
+  return jwt.sign({ _id: this._id }, config.accessTokenSecret || "");
+};
 
+//refresh token generate
+userSchema.methods.refreshToken = function () {
+  return jwt.sign({ _id: this._id }, config.refreshTokenSecret || "");
+};
+
+//compare password
 userSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
-  return await bcrypt.compare(enteredPassword, this.Password);
+  const isMatch = await bcrypt.compare(enteredPassword, this.password);
+  return isMatch;
 };
 
 const userModel: Model<IUser> = mongoose.model("User", userSchema);

@@ -5,10 +5,15 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import config from "../config/config";
 import { createActivationToken } from "../helpers/activationToken";
+import { sendToken } from "../helpers/jwt";
 import sendMail from "../helpers/sendMail";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import userModel from "../models/user.model";
-import { IActivationInfo, IActivationRequest } from "../types/user.controller";
+import {
+  IActivationInfo,
+  IActivationRequest,
+  ILoginUser,
+} from "../types/user.controller";
 import ErrorHandler from "../utils/errorHandler";
 
 export const registerUser = CatchAsyncError(
@@ -109,6 +114,52 @@ export const activateUser = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+//login user
+export const loginUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body as ILoginUser;
+
+      if (!email && !password) {
+        return next(new ErrorHandler("All field are required", 400));
+      }
+
+      const user = await userModel.findOne({ email }).select("+password");
+
+      if (!user) {
+        return next(new ErrorHandler("Invalid email or password", 400));
+      }
+
+      const isPasswordMatch = await user.comparePassword(password);
+
+      if (!isPasswordMatch) {
+        return next(new ErrorHandler("Invalid email or password", 400));
+      }
+
+      sendToken(user, 200, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(`User -- ${error.message}`, 400));
+    }
+  }
+);
+
+//logout user
+export const logoutUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.cookie("access_token", "", { maxAge: 1 });
+      res.cookie("refresh_token", "", { maxAge: 1 });
+
+      res.status(200).json({
+        success: true,
+        message: "Logout successfull",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`User -- ${error.message}`, 400));
     }
   }
 );

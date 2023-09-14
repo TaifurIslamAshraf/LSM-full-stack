@@ -15,6 +15,10 @@ const config = {
 
   jwtSecret: process.env.JWT_SECRET as string,
   activationSecret: process.env.ACTIVATION_SECRET as string,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET as string,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET as string,
+  accessTokenExpire: process.env.ACCESS_TOKEN_EXPIRE as string,
+  refreshToeknExpire: process.env.REFRESH_TOKEN_EXPIRE as string,
 
   smtpHost: process.env.SMTP_HOST,
   smtpPort: parseInt(process.env.SMTP_PORT || "587"),

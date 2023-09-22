@@ -2,8 +2,8 @@ import ejs from "ejs";
 import nodemailer, { Transporter } from "nodemailer";
 import path from "path";
 
+import { IEmailOption } from "../../@types/EmailOptions";
 import config from "../config/config";
-import { IEmailOption } from "../types/EmailOptions";
 
 const sendMail = async (option: IEmailOption): Promise<void> => {
   const transporter: Transporter = nodemailer.createTransport({

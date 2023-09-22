@@ -3,17 +3,18 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import path from "path";
+import {
+  IActivationInfo,
+  IActivationRequest,
+  ILoginUser,
+} from "../../@types/user.controller";
 import config from "../config/config";
+import { redis } from "../config/redis";
 import { createActivationToken } from "../helpers/activationToken";
 import { sendToken } from "../helpers/jwt";
 import sendMail from "../helpers/sendMail";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import userModel from "../models/user.model";
-import {
-  IActivationInfo,
-  IActivationRequest,
-  ILoginUser,
-} from "../types/user.controller";
 import ErrorHandler from "../utils/errorHandler";
 
 export const registerUser = CatchAsyncError(
@@ -153,6 +154,9 @@ export const logoutUser = CatchAsyncError(
     try {
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
+
+      const userId = (req as any).user?._id || "";
+      redis.del(userId);
 
       res.status(200).json({
         success: true,

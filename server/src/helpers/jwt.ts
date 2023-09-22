@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
 import { Response } from "express";
+import { ITokenOption } from "../../@types/jwt";
+import { IUser } from "../../@types/user.model";
 import config from "../config/config";
 import { redis } from "../config/redis";
-import { ITokenOption } from "../types/jwt";
-import { IUser } from "../types/user.model";
 
 dotenv.config();
 

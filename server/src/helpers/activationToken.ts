@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
+import { IActivationInfo } from "../../@types/user.controller";
 import config from "../config/config";
-import { IActivationInfo } from "../types/user.controller";
 
 export interface IActivationToken {
   token: string;

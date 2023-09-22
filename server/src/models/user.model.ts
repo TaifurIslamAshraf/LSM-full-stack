@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mongoose, { Model, Schema } from "mongoose";
+import { IUser } from "../../@types/user.model";
 import config from "../config/config";
-import { IUser } from "../types/user.model";
 
 const emailRegexValidtor: RegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 

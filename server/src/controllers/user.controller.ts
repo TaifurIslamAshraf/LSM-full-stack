@@ -1,3 +1,4 @@
+import cloudinary from "cloudinary";
 import ejs from "ejs";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -9,6 +10,7 @@ import {
   ILoginUser,
   ISocialAuthBody,
   IUpdatePassword,
+  IUpdateProfile,
   IUpdateUserInfo,
 } from "../../@types/user.controller";
 import config from "../config/config";
@@ -29,7 +31,8 @@ export const registerUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       //get data from body
-      const { name, email, password, avatar } = req.body;
+      const { name, email, password, avatar, isSocialAuth } =
+        req.body as IActivationInfo;
 
       //is Exist email
       const isExist = await userModel.exists({ email });
@@ -38,12 +41,14 @@ export const registerUser = CatchAsyncError(
       }
 
       //send activation email
-      const activationInfo: IActivationInfo = {
-        name,
-        email,
-        password,
-        avatar,
+      const activationInfo = {
+        name: name,
+        email: email,
+        password: password,
+        avatar: avatar,
+        isSocialAuth: isSocialAuth,
       };
+
       const { token, activationCode } = createActivationToken(activationInfo);
 
       const data = {
@@ -99,9 +104,10 @@ export const activateUser = CatchAsyncError(
       if (newUser.activationCode !== activation_code) {
         return next(new ErrorHandler("Invalid activation code", 400));
       }
+      console.log(newUser.user.avatar);
 
       //user data save in database
-      const { name, email, password, avatar } = newUser.user;
+      const { name, email, password, avatar, isSocialAuth } = newUser.user;
 
       const existUser = await userModel.exists({ email });
 
@@ -114,6 +120,7 @@ export const activateUser = CatchAsyncError(
         email,
         password,
         avatar,
+        isSocialAuth,
       });
 
       res.status(201).json({
@@ -251,7 +258,13 @@ export const socialAuth = CatchAsyncError(
       const user = await userModel.findOne({ email });
 
       if (!user) {
-        const newUser = await userModel.create({ name, email, avatar });
+        const newUser = await userModel.create({
+          name,
+          email,
+          avatar,
+          isSocialAuth: true,
+        });
+
         sendToken(newUser, 201, res);
       } else {
         sendToken(user, 200, res);
@@ -314,10 +327,11 @@ export const updatePassword = CatchAsyncError(
       const user = await userModel
         .findById((req as any).user?._id)
         .select("+password");
-      console.log(user);
 
       if (user?.password === undefined) {
-        return next(new ErrorHandler("you not to able update password", 400));
+        return next(
+          new ErrorHandler("you are not to able update password", 400)
+        );
       }
 
       const isPasswordMatch = await user.comparePassword(oldPassword);
@@ -330,6 +344,7 @@ export const updatePassword = CatchAsyncError(
       user.password = newPassword;
 
       await user.save();
+      await redis.set((req as any).user?._id, JSON.stringify(user));
 
       res.status(201).json({
         success: true,
@@ -337,6 +352,57 @@ export const updatePassword = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(`update password -- ${error.message}`, 400));
+    }
+  }
+);
+
+//update profile picture
+export const updateAvatar = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { avatar } = req.body as IUpdateProfile;
+
+      if (!avatar) {
+        return next(new ErrorHandler("avatar is required", 400));
+      }
+
+      const userId = (req as any).user?._id;
+      const user = await userModel.findById(userId);
+
+      if (!user) {
+        return next(new ErrorHandler("User is not found", 404));
+      }
+
+      if (user.isSocialAuth) {
+        return next(
+          new ErrorHandler("You are not able to update profile picture", 400)
+        );
+      }
+
+      //frist delete ole one
+      if (user?.avatar?.public_id) {
+        await cloudinary.v2.uploader.destroy(user?.avatar?.public_id);
+      }
+
+      const newProfile = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "avatar",
+        width: 150,
+      });
+
+      user.avatar = {
+        public_id: newProfile.public_id,
+        url: newProfile.url,
+      };
+
+      await user.save();
+      await redis.set(userId, JSON.stringify(user));
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`update profile -- ${error.message}`, 400));
     }
   }
 );

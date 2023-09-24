@@ -9,7 +9,11 @@ export interface IActivationInfo {
   name: string;
   email: string;
   password: string;
-  avatar: string;
+  isSocialAuth: boolean;
+  avatar: {
+    public_id?: string;
+    url?: string;
+  };
 }
 
 export interface IActivationRequest {
@@ -25,6 +29,7 @@ export interface ILoginUser {
 export interface ISocialAuthBody {
   name: string;
   email: string;
+  isSocialAuth: boolean;
   avatar: {
     public_id?: string;
     url?: string;
@@ -39,4 +44,8 @@ export interface IUpdateUserInfo {
 export interface IUpdatePassword {
   oldPassword: string;
   newPassword: string;
+}
+
+export interface IUpdateProfile {
+  avatar: string;
 }

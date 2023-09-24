@@ -4,6 +4,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  isSocialAuth: boolean;
   avatar: {
     public_id: string;
     url: string;

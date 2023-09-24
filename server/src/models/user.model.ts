@@ -30,6 +30,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       select: false,
     },
 
+    isSocialAuth: {
+      type: Boolean,
+      required: [true, "Please enter isSocialAuth"],
+    },
+
     avatar: {
       public_id: String,
       url: String,

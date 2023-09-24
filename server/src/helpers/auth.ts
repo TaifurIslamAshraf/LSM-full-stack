@@ -37,3 +37,19 @@ export const isAuthenticated = CatchAsyncError(
     next();
   }
 );
+
+//user validatior
+export const authorizedUser = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!roles.includes((req as any).user?.role || "")) {
+      return next(
+        new ErrorHandler(
+          `${(req as any).user?.role} is not allowed to access this resource`,
+          403
+        )
+      );
+    }
+
+    next();
+  };
+};

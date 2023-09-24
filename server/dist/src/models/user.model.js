@@ -13,7 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const config_1 = __importDefault(require("../config/config"));
 const emailRegexValidtor = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 const userSchema = new mongoose_1.default.Schema({
     name: {
@@ -65,10 +67,19 @@ userSchema.pre("save", function (next) {
         next();
     });
 });
+//access token generate
+userSchema.methods.accessToken = function () {
+    return jsonwebtoken_1.default.sign({ _id: this._id }, config_1.default.accessTokenSecret || "");
+};
+//refresh token generate
+userSchema.methods.refreshToken = function () {
+    return jsonwebtoken_1.default.sign({ _id: this._id }, config_1.default.refreshTokenSecret || "");
+};
 //compare password
 userSchema.methods.comparePassword = function (enteredPassword) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield bcryptjs_1.default.compare(enteredPassword, this.Password);
+        const isMatch = yield bcryptjs_1.default.compare(enteredPassword, this.password);
+        return isMatch;
     });
 };
 const userModel = mongoose_1.default.model("User", userSchema);

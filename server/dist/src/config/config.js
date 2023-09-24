@@ -13,5 +13,16 @@ const config = {
     cloudName: process.env.CLOUD_NAME,
     cloudApiKey: process.env.CLOUD_API_KEY,
     cloudApiSecret: process.env.CLOUD_API_SECRET,
+    jwtSecret: process.env.JWT_SECRET,
+    activationSecret: process.env.ACTIVATION_SECRET,
+    refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+    accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+    accessTokenExpire: process.env.ACCESS_TOKEN_EXPIRE,
+    refreshToeknExpire: process.env.REFRESH_TOKEN_EXPIRE,
+    smtpHost: process.env.SMTP_HOST,
+    smtpPort: parseInt(process.env.SMTP_PORT || "587"),
+    smtpService: process.env.SMTP_SERVICE,
+    smtpMail: process.env.SMTP_MAIL,
+    smtpPassword: process.env.SMTP_PASSWORD,
 };
 exports.default = config;

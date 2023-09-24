@@ -1,18 +1,26 @@
 import ejs from "ejs";
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 import path from "path";
 import {
   IActivationInfo,
   IActivationRequest,
   ILoginUser,
+  ISocialAuthBody,
+  IUpdatePassword,
+  IUpdateUserInfo,
 } from "../../@types/user.controller";
 import config from "../config/config";
 import { redis } from "../config/redis";
 import { createActivationToken } from "../helpers/activationToken";
-import { sendToken } from "../helpers/jwt";
+import {
+  accessTokenOption,
+  refreshToeknOption,
+  sendToken,
+} from "../helpers/jwt";
 import sendMail from "../helpers/sendMail";
+import { getUserbyId } from "../helpers/users.services";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import userModel from "../models/user.model";
 import ErrorHandler from "../utils/errorHandler";
@@ -164,6 +172,171 @@ export const logoutUser = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(`User -- ${error.message}`, 400));
+    }
+  }
+);
+
+//update access token
+export const updateAccessToken = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refresh_token = req.cookies.refresh_token as string;
+      const decoded = jwt.verify(
+        refresh_token,
+        config.refreshTokenSecret
+      ) as JwtPayload;
+
+      if (!decoded) {
+        return next(new ErrorHandler("Cloud not have refresh token", 400));
+      }
+
+      const session = await redis.get(decoded._id);
+
+      if (!session) {
+        return next(new ErrorHandler("Cloud not have refresh token", 400));
+      }
+
+      const user = JSON.parse(session);
+
+      const accessToken = jwt.sign(
+        { _id: user._id },
+        config.accessTokenSecret,
+        {
+          expiresIn: "5m",
+        }
+      );
+
+      const refreshToken = jwt.sign(
+        { _id: user._id },
+        config.refreshTokenSecret,
+        { expiresIn: "3d" }
+      );
+
+      res.cookie("access_token", accessToken, accessTokenOption);
+      res.cookie("refresh_token", refreshToken, refreshToeknOption);
+
+      res.status(200).json({
+        success: true,
+        accessToken,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`User -- ${error.message}`, 400));
+    }
+  }
+);
+
+//get user info
+export const getUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req as any).user?._id;
+      console.log(userId);
+
+      getUserbyId(userId, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(`User -- ${error.message}`, 400));
+    }
+  }
+);
+
+//social auth
+export const socialAuth = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, email, avatar } = req.body as ISocialAuthBody;
+      if (!name || !email || !avatar) {
+        return next(new ErrorHandler("All field are required", 400));
+      }
+
+      const user = await userModel.findOne({ email });
+
+      if (!user) {
+        const newUser = await userModel.create({ name, email, avatar });
+        sendToken(newUser, 201, res);
+      } else {
+        sendToken(user, 200, res);
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(`social auth -- ${error.message}`, 400));
+    }
+  }
+);
+
+//update user info
+
+export const updateUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, email } = req.body as IUpdateUserInfo;
+      const userId = (req as any).user?._id;
+      const user = await userModel.findById(userId);
+
+      if (!user) {
+        return next(new ErrorHandler("User is not found", 404));
+      }
+
+      const emailExist = await userModel.findOne({ email });
+      if (emailExist) {
+        return next(new ErrorHandler("Email alredy exist", 400));
+      }
+
+      if (name && user) {
+        user.name = name;
+      }
+      if (email && user) {
+        user.email = email;
+      }
+
+      await user?.save();
+
+      await redis.set(userId, JSON.stringify(user));
+
+      res.status(201).json({
+        success: true,
+        user,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`update user -- ${error.message}`, 400));
+    }
+  }
+);
+
+//update password
+export const updatePassword = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { oldPassword, newPassword } = req.body as IUpdatePassword;
+
+      if (!oldPassword || !newPassword) {
+        return next(new ErrorHandler("All field are required", 400));
+      }
+
+      const user = await userModel
+        .findById((req as any).user?._id)
+        .select("+password");
+      console.log(user);
+
+      if (user?.password === undefined) {
+        return next(new ErrorHandler("you not to able update password", 400));
+      }
+
+      const isPasswordMatch = await user.comparePassword(oldPassword);
+      console.log(isPasswordMatch);
+
+      if (!isPasswordMatch) {
+        return next(new ErrorHandler("Invalid old Password", 400));
+      }
+
+      user.password = newPassword;
+
+      await user.save();
+
+      res.status(201).json({
+        success: true,
+        user,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`update password -- ${error.message}`, 400));
     }
   }
 );

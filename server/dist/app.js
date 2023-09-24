@@ -7,10 +7,12 @@ exports.app = void 0;
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./src/config/config"));
 const db_1 = __importDefault(require("./src/config/db"));
 const error_1 = require("./src/middlewares/error");
 const SuccessRes_1 = __importDefault(require("./src/utils/SuccessRes"));
+const user_route_1 = __importDefault(require("./src/routes/user.route"));
 exports.app = (0, express_1.default)();
 //database connections
 (0, db_1.default)();
@@ -23,6 +25,8 @@ exports.app.use(express_1.default.urlencoded({ extended: true }));
 exports.app.use((0, cookie_parser_1.default)());
 //cors
 exports.app.use((0, cors_1.default)({ origin: config_1.default.origin }));
+//all routes
+exports.app.use("/api", user_route_1.default);
 //test route
 exports.app.get("/", (req, res) => {
     try {
@@ -36,7 +40,7 @@ exports.app.get("/", (req, res) => {
 });
 //not found
 exports.app.all("*", (req, res, next) => {
-    res.status(404).sendFile(__dirname + "/views/error.html");
+    res.status(404).sendFile(path_1.default.join(__dirname + "/views/error.html"));
 });
 //error handler
 exports.app.use(error_1.ErrorMiddleware);

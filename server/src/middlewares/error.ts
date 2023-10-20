@@ -7,8 +7,8 @@ export const ErrorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  err.statusCode || 500;
-  err.message || "Internal Server Error!";
+  err.statusCode = err.statusCode || 500;
+  err.message = err.message || "Internal Server Error!";
 
   //wrong mongodbId
   if (err.name === "CastError") {

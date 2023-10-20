@@ -22,9 +22,9 @@ import {
   sendToken,
 } from "../helpers/jwt";
 import sendMail from "../helpers/sendMail";
-import { getUserbyId } from "../helpers/users.services";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import userModel from "../models/user.model";
+import { getUserbyId } from "../services/user.service";
 import ErrorHandler from "../utils/errorHandler";
 
 export const registerUser = CatchAsyncError(
@@ -170,7 +170,8 @@ export const logoutUser = CatchAsyncError(
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
 
-      const userId = (req as any).user?._id || "";
+      const userId = res.locals.user?._id || "";
+
       redis.del(userId);
 
       res.status(200).json({
@@ -236,7 +237,7 @@ export const updateAccessToken = CatchAsyncError(
 export const getUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = (req as any).user?._id;
+      const userId = res.locals.user?._id;
       console.log(userId);
 
       getUserbyId(userId, res);
@@ -276,12 +277,11 @@ export const socialAuth = CatchAsyncError(
 );
 
 //update user info
-
 export const updateUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email } = req.body as IUpdateUserInfo;
-      const userId = (req as any).user?._id;
+      const userId = res.locals.user?._id;
       const user = await userModel.findById(userId);
 
       if (!user) {
@@ -325,7 +325,7 @@ export const updatePassword = CatchAsyncError(
       }
 
       const user = await userModel
-        .findById((req as any).user?._id)
+        .findById(res.locals.user?._id)
         .select("+password");
 
       if (user?.password === undefined) {
@@ -344,7 +344,7 @@ export const updatePassword = CatchAsyncError(
       user.password = newPassword;
 
       await user.save();
-      await redis.set((req as any).user?._id, JSON.stringify(user));
+      await redis.set(res.locals.user?._id, JSON.stringify(user));
 
       res.status(201).json({
         success: true,
@@ -366,7 +366,7 @@ export const updateAvatar = CatchAsyncError(
         return next(new ErrorHandler("avatar is required", 400));
       }
 
-      const userId = (req as any).user?._id;
+      const userId = res.locals.user?._id;
       const user = await userModel.findById(userId);
 
       if (!user) {

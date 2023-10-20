@@ -1,7 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 import { NextFunction, Request, Response } from "express";
-import { IUser } from "../../@types/user.model";
 import config from "../config/config";
 import { redis } from "../config/redis";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
@@ -32,7 +31,7 @@ export const isAuthenticated = CatchAsyncError(
       return next(new ErrorHandler("User not found", 404));
     }
 
-    (req as any).user = JSON.parse(user) as IUser;
+    res.locals.user = JSON.parse(user);
 
     next();
   }
@@ -41,10 +40,10 @@ export const isAuthenticated = CatchAsyncError(
 //user validatior
 export const authorizedUser = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!roles.includes((req as any).user?.role || "")) {
+    if (!roles.includes(res.locals.user?.role) || "") {
       return next(
         new ErrorHandler(
-          `${(req as any).user?.role} is not allowed to access this resource`,
+          `${res.locals.user?.role} is not allowed to access this resource`,
           403
         )
       );

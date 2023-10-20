@@ -8,6 +8,7 @@ import connectDB from "./src/config/db";
 import { ErrorMiddleware } from "./src/middlewares/error";
 import successRes from "./src/utils/SuccessRes";
 
+import courseRoute from "./src/routes/course.route";
 import userRouter from "./src/routes/user.route";
 
 export const app = express();
@@ -30,6 +31,7 @@ app.use(cors({ origin: config.origin }));
 
 //all routes
 app.use("/api", userRouter);
+app.use("/api", courseRoute);
 
 //test route
 app.get("/", (req: Request, res: Response) => {

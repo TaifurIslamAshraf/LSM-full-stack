@@ -11,14 +11,14 @@ import {
   updatePassword,
   updateUserInfo,
 } from "../controllers/user.controller";
-import { authorizedUser, isAuthenticated } from "../helpers/auth";
+import { isAuthenticated } from "../helpers/auth";
 
 const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/activation", activateUser);
 router.post("/login", loginUser);
-router.get("/logout", isAuthenticated, authorizedUser("user"), logoutUser);
+router.get("/logout", isAuthenticated, logoutUser);
 router.get("/refresh", updateAccessToken);
 router.get("/me", isAuthenticated, getUserInfo);
 router.post("/social-auth", socialAuth);

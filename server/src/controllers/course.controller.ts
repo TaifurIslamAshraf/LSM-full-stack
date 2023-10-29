@@ -1,6 +1,7 @@
 import cloudinary from "cloudinary";
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
+import { IAddAsnwareBody, IQustionBody } from "../../@types/course";
 import { redis } from "../config/redis";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import courseModel from "../models/course.model";
@@ -130,6 +131,142 @@ export const getAllCourses = CatchAsyncError(
           courses,
         });
       }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//get course content only for valid user
+export const getCourseByUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userCourseList = res.locals.user?.course;
+      const courseId = req.params.id;
+
+      if (
+        !Types.ObjectId.isValid(userCourseList) &&
+        !Types.ObjectId.isValid(courseId)
+      ) {
+        return next(new ErrorHandler("invalid course", 400));
+      }
+
+      const courseExist = userCourseList?.find(
+        (course: any) => course.courseId.toString() === courseId
+      );
+
+      if (!courseExist) {
+        return next(
+          new ErrorHandler("You are not eligible to access this course", 404)
+        );
+      }
+
+      const course = await courseModel.aggregate([
+        {
+          $match: {
+            _id: new Types.ObjectId(courseId),
+          },
+        },
+        {
+          $project: {
+            courseData: 1,
+          },
+        },
+      ]);
+
+      res.status(200).json({
+        success: true,
+        course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//add qustions
+export const addQustion = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { qustion, courseId, contentId }: IQustionBody = req.body;
+
+      if (!Types.ObjectId.isValid(contentId)) {
+        return next(new ErrorHandler("Invalid course id", 400));
+      }
+
+      const course = await courseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("course not found", 404));
+      }
+      const courseContent = course?.courseData.find(
+        (item: any) => item._id.toString() === contentId
+      );
+
+      if (!courseContent) {
+        return next(new ErrorHandler("course content not found", 404));
+      }
+
+      const newQustion: any = {
+        user: res.locals.user._id,
+        qustion,
+        qustionReplies: [],
+      };
+
+      //add qustion in course
+      courseContent.qustions.push(newQustion);
+
+      await course.save();
+
+      res.status(200).json({
+        success: true,
+        course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//add answare in course qustion
+export const addAnsware = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { contentId, courseId, answare, qustionId }: IAddAsnwareBody =
+        req.body;
+      if (!Types.ObjectId.isValid(courseId)) {
+        return next(new ErrorHandler("Invalid course", 400));
+      }
+
+      const ansObj = {
+        user: res.locals.user._id,
+        answare,
+      };
+
+      const updatedAnsware = await courseModel.findByIdAndUpdate(
+        courseId,
+        {
+          $push: {
+            "courseData.$[data].qustions.$[qustion].qustionReplies": ansObj,
+          },
+        },
+        {
+          arrayFilters: [
+            { "data._id": contentId },
+            { "qustion._id": qustionId },
+          ],
+          new: true,
+        }
+      );
+
+      if (!updatedAnsware) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Answer added successfully",
+        data: updatedAnsware,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }

@@ -2,8 +2,8 @@ import { Document } from "mongoose";
 
 export interface IComment extends Document {
   user: object;
-  comment: string;
-  commentReplies: IComment[];
+  qustion: string;
+  qustionReplies: IComment[];
 }
 
 export interface IReview extends Document {
@@ -50,4 +50,17 @@ export interface ICourse extends Document {
   courseData: ICoursData[];
   rating?: number;
   purchased?: number;
+}
+
+export interface IQustionBody {
+  qustion: string;
+  courseId: string;
+  contentId: string;
+}
+
+export interface IAddAsnwareBody {
+  answare: string;
+  courseId: string;
+  contentId: string;
+  qustionId: string;
 }

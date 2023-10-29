@@ -37,10 +37,10 @@ const commentSchema = new Schema<IComment>({
     ref: "User",
     required: true,
   },
-  comment: {
+  qustion: {
     type: String,
   },
-  commentReplies: {
+  qustionReplies: {
     type: [Object],
   },
 });

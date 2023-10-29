@@ -1,7 +1,10 @@
 import express from "express";
 import {
+  addAnsware,
+  addQustion,
   editCourse,
   getAllCourses,
+  getCourseByUser,
   getSingleCourse,
   uploadCourse,
 } from "../controllers/course.controller";
@@ -23,5 +26,13 @@ courseRoute.patch(
 );
 courseRoute.get("/get-course/:id", getSingleCourse);
 courseRoute.get("/get-courses", getAllCourses);
+courseRoute.get("/get-user-course/:id", isAuthenticated, getCourseByUser);
+courseRoute.patch("/add-qustion", isAuthenticated, addQustion);
+courseRoute.patch(
+  "/add-answare",
+  isAuthenticated,
+  authorizedUser("admin"),
+  addAnsware
+);
 
 export default courseRoute;

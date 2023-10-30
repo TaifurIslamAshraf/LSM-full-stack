@@ -262,10 +262,27 @@ export const addAnsware = CatchAsyncError(
         return next(new ErrorHandler("Course not found", 404));
       }
 
+      const courseContent = updatedAnsware.courseData.find(
+        (item: any) => item._id.toString() === contentId
+      );
+
+      const qustion = courseContent.find(
+        (item: any) => item._id.toString() === qustionId
+      );
+
+      if (res.locals.user._id === qustion.user._id.toString()) {
+        // create a notification
+      } else {
+        const data = {
+          name: qustion.user.name,
+          title: courseContent.title,
+        };
+      }
+
       return res.status(200).json({
         success: true,
         message: "Answer added successfully",
-        data: updatedAnsware,
+        course: updatedAnsware,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

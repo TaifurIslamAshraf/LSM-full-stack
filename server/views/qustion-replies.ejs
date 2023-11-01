@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qustion Replies</title>
+  </head>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      height: 100%;
+      width: 100%;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: aliceblue;
+      padding: 2rem;
+    }
+    h1 {
+      color: #423b3b;
+      margin-bottom: 1rem;
+    }
+    p {
+      margin-top: 5px;
+      font-size: 18px;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <h1>Hello <%= name %></h1>
+      <p>A new replies added to your qustion in this video "<%= title %>"</p>
+      <p>
+        Please Login out website and view the replie and continue discussion
+      </p>
+      <p>Thank you for begain a part of our comminuty</p>
+    </div>
+  </body>
+</html>

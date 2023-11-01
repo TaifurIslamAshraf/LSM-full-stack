@@ -10,7 +10,7 @@ export interface IReview extends Document {
   user: object;
   rating: number;
   comment: string;
-  commentReplies: IComment[];
+  commentReplies?: [Object];
 }
 
 export interface ILink extends Document {

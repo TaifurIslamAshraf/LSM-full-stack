@@ -2,6 +2,8 @@ import express from "express";
 import {
   addAnsware,
   addQustion,
+  addReviewReplies,
+  addReviews,
   editCourse,
   getAllCourses,
   getCourseByUser,
@@ -28,11 +30,13 @@ courseRoute.get("/get-course/:id", getSingleCourse);
 courseRoute.get("/get-courses", getAllCourses);
 courseRoute.get("/get-user-course/:id", isAuthenticated, getCourseByUser);
 courseRoute.patch("/add-qustion", isAuthenticated, addQustion);
-courseRoute.patch(
-  "/add-answare",
+courseRoute.patch("/add-answare", isAuthenticated, addAnsware);
+courseRoute.put("/add-review/:id", isAuthenticated, addReviews);
+courseRoute.put(
+  "/add-replies-review",
   isAuthenticated,
   authorizedUser("admin"),
-  addAnsware
+  addReviewReplies
 );
 
 export default courseRoute;

@@ -1,10 +1,15 @@
 import cloudinary from "cloudinary";
+import ejs from "ejs";
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
+
+import path from "path";
 import { IAddAsnwareBody, IQustionBody } from "../../@types/course";
 import { redis } from "../config/redis";
+import sendMail from "../helpers/sendMail";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import courseModel from "../models/course.model";
+import userModel from "../models/user.model";
 import { crateCourse, updateCourseService } from "../services/course.service";
 import ErrorHandler from "../utils/errorHandler";
 
@@ -265,24 +270,143 @@ export const addAnsware = CatchAsyncError(
       const courseContent = updatedAnsware.courseData.find(
         (item: any) => item._id.toString() === contentId
       );
-
-      const qustion = courseContent.find(
+      const qustion = courseContent?.qustions.find(
         (item: any) => item._id.toString() === qustionId
       );
 
-      if (res.locals.user._id === qustion.user._id.toString()) {
+      const qustionUser = await userModel.findById(qustion.user.toString());
+
+      if (!qustionUser) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      if (res.locals.user._id === qustion.user.toString()) {
         // create a notification
       } else {
         const data = {
-          name: qustion.user.name,
+          name: qustionUser?.name,
           title: courseContent.title,
         };
+
+        const html = await ejs.renderFile(
+          path.join(__dirname, "../../views/qustion-replies.ejs"),
+          data
+        );
+
+        try {
+          await sendMail({
+            email: qustionUser.email,
+            subject: "Qustion Replies form LMS",
+            templete: "qustion-replies.ejs",
+            data,
+          });
+        } catch (error: any) {
+          return next(new ErrorHandler(error.message, 500));
+        }
       }
 
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         message: "Answer added successfully",
         course: updatedAnsware,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+// add review in course
+export const addReviews = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { review, rating } = req.body;
+      const courseId = req.params.id;
+      const userCourseList = res.locals.user?.course;
+
+      const courseExist = userCourseList.some(
+        (item: any) => item.courseId === courseId
+      );
+
+      if (!courseExist) {
+        return next(
+          new ErrorHandler("You are not eligble in this course", 400)
+        );
+      }
+
+      const course = await courseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      const reviewData: any = {
+        user: res.locals.user._id,
+        rating,
+        comment: review,
+      };
+
+      course?.reviews.push(reviewData);
+
+      let avg = 0;
+
+      course?.reviews.forEach((rev: any) => {
+        avg += rev.rating;
+      });
+
+      course.rating = avg / course.reviews.length;
+
+      await course.save();
+
+      const notification = {
+        title: "New Review added",
+        message: `${res.locals.user.name} has given a review in yours course ${course.name}`,
+      };
+
+      //send a notifications
+
+      res.status(200).json({
+        success: true,
+        course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//add replies in review
+export const addReviewReplies = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { courseId, reviewId, reviewReplies } = req.body;
+
+      const course = await courseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      const review = course.reviews.find(
+        (rev: any) => rev._id.toString() === reviewId
+      );
+      if (!review) {
+        return next(new ErrorHandler("Course review not found", 404));
+      }
+
+      const replieReviewData = {
+        user: res.locals.user._id,
+        reviewReplies,
+      };
+
+      if (!review.commentReplies) {
+        review.commentReplies = [{}];
+      }
+
+      review.commentReplies?.push(replieReviewData);
+      await course.save();
+
+      res.status(201).json({
+        success: true,
+        course,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

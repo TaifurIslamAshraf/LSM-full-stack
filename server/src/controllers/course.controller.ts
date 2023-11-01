@@ -157,7 +157,7 @@ export const getCourseByUser = CatchAsyncError(
       }
 
       const courseExist = userCourseList?.find(
-        (course: any) => course.courseId.toString() === courseId
+        (course: any) => course._id.toString() === courseId
       );
 
       if (!courseExist) {
@@ -325,7 +325,7 @@ export const addReviews = CatchAsyncError(
       const userCourseList = res.locals.user?.course;
 
       const courseExist = userCourseList.some(
-        (item: any) => item.courseId === courseId
+        (item: any) => item._id.toString() === courseId
       );
 
       if (!courseExist) {
@@ -413,3 +413,5 @@ export const addReviewReplies = CatchAsyncError(
     }
   }
 );
+
+//

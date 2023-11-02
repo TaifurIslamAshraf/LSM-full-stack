@@ -49,14 +49,16 @@ export const createOrder = CatchAsyncError(
       await orderService(course, user, next);
 
       user.course.push(course._id);
-      await user.save();
+      course.purchased = (course.purchased ?? 0) + 1;
 
       await NotificationModel.create({
         userId: userId,
         title: "New Order",
-        status: "online",
         message: `Your order has been placed for ${course.name}`,
       });
+
+      await user.save();
+      await course.save();
 
       res.status(201).json({
         success: true,

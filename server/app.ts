@@ -9,6 +9,7 @@ import { ErrorMiddleware } from "./src/middlewares/error";
 import successRes from "./src/utils/SuccessRes";
 
 import courseRoute from "./src/routes/course.route";
+import notificationRoute from "./src/routes/notification.route";
 import orderRouter from "./src/routes/order.route";
 import userRouter from "./src/routes/user.route";
 
@@ -34,6 +35,7 @@ app.use(cors({ origin: config.origin }));
 app.use("/api", userRouter);
 app.use("/api", courseRoute);
 app.use("/api", orderRouter);
+app.use("/api", notificationRoute);
 
 //test route
 app.get("/", (req: Request, res: Response) => {

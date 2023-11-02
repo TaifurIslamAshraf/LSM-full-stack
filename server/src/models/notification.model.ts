@@ -13,7 +13,8 @@ const notificationSchema = new Schema<INotification>(
     },
     status: {
       type: String,
-      required: true,
+      enum: ["seen", "unseen"],
+      default: "unseen",
     },
     userId: {
       type: Schema.Types.ObjectId,

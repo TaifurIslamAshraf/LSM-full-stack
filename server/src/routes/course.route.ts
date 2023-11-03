@@ -4,8 +4,10 @@ import {
   addQustion,
   addReviewReplies,
   addReviews,
+  deleteCourse,
   editCourse,
   getAllCourses,
+  getAllProUserCourses,
   getCourseByUser,
   getSingleCourse,
   uploadCourse,
@@ -28,6 +30,12 @@ courseRoute.patch(
 );
 courseRoute.get("/get-course/:id", getSingleCourse);
 courseRoute.get("/get-courses", getAllCourses);
+courseRoute.get(
+  "/get-pro-users-courses",
+  isAuthenticated,
+  authorizedUser("admin"),
+  getAllProUserCourses
+);
 courseRoute.get("/get-user-course/:id", isAuthenticated, getCourseByUser);
 courseRoute.patch("/add-qustion", isAuthenticated, addQustion);
 courseRoute.patch("/add-answare", isAuthenticated, addAnsware);
@@ -37,6 +45,12 @@ courseRoute.put(
   isAuthenticated,
   authorizedUser("admin"),
   addReviewReplies
+);
+courseRoute.delete(
+  "/delete-course/:id",
+  isAuthenticated,
+  authorizedUser("admin"),
+  deleteCourse
 );
 
 export default courseRoute;

@@ -9,6 +9,7 @@ import { redis } from "../config/redis";
 import sendMail from "../helpers/sendMail";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import courseModel from "../models/course.model";
+import { NotificationModel } from "../models/notification.model";
 import userModel from "../models/user.model";
 import { crateCourse, updateCourseService } from "../services/course.service";
 import ErrorHandler from "../utils/errorHandler";
@@ -220,6 +221,13 @@ export const addQustion = CatchAsyncError(
       //add qustion in course
       courseContent.qustions.push(newQustion);
 
+      //create notifications
+      await NotificationModel.create({
+        userId: res.locals.user._id,
+        title: "New qustion",
+        message: `Your have a new qustion for this ${course.name} on ${courseContent.title} lecture`,
+      });
+
       await course.save();
 
       res.status(200).json({
@@ -281,7 +289,12 @@ export const addAnsware = CatchAsyncError(
       }
 
       if (res.locals.user._id === qustion.user.toString()) {
-        // create a notification
+        //create notifications
+        await NotificationModel.create({
+          userId: res.locals.user._id,
+          title: "New qustion",
+          message: `Your have a new qustion for this ${updatedAnsware.name} on ${courseContent.title} lecture`,
+        });
       } else {
         const data = {
           name: qustionUser?.name,
@@ -414,4 +427,40 @@ export const addReviewReplies = CatchAsyncError(
   }
 );
 
-//
+//get all courses -- admin
+export const getAllProUserCourses = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courses = await courseModel.find().sort({ createdAt: -1 });
+
+      res.status(200).json({
+        success: true,
+        courses,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//delete course
+export const deleteCourse = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+      const course = await courseModel.findByIdAndDelete(id);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: "course deleted successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

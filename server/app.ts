@@ -8,6 +8,7 @@ import connectDB from "./src/config/db";
 import { ErrorMiddleware } from "./src/middlewares/error";
 import successRes from "./src/utils/SuccessRes";
 
+import analyticsRoute from "./src/routes/analylics.route";
 import courseRoute from "./src/routes/course.route";
 import notificationRoute from "./src/routes/notification.route";
 import orderRouter from "./src/routes/order.route";
@@ -36,6 +37,7 @@ app.use("/api", userRouter);
 app.use("/api", courseRoute);
 app.use("/api", orderRouter);
 app.use("/api", notificationRoute);
+app.use("/api", analyticsRoute);
 
 //test route
 app.get("/", (req: Request, res: Response) => {

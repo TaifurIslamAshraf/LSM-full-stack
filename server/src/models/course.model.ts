@@ -87,63 +87,68 @@ const courseDataSchema = new Schema<ICourseData>({
   },
 });
 
-const courseSchema = new Schema<ICourse>({
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  estimatedPrice: {
-    type: String,
-  },
-  thumbnail: {
-    public_id: {
+const courseSchema = new Schema<ICourse>(
+  {
+    name: {
       type: String,
-      // required: true,
+      required: true,
     },
-    url: {
+    description: {
       type: String,
-      // required: true,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    estimatedPrice: {
+      type: String,
+    },
+    thumbnail: {
+      public_id: {
+        type: String,
+        // required: true,
+      },
+      url: {
+        type: String,
+        // required: true,
+      },
+    },
+    tags: {
+      type: String,
+      required: true,
+    },
+    level: {
+      type: String,
+      required: true,
+    },
+    demoUrl: {
+      type: String,
+      required: true,
+    },
+    benefits: {
+      type: [{ title: String }],
+      required: true,
+    },
+    prerequistites: {
+      type: [{ title: String }],
+      required: true,
+    },
+    reviews: [reviewSchema],
+    courseData: [courseDataSchema],
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    purchased: {
+      type: Number,
+      default: 0,
     },
   },
-  tags: {
-    type: String,
-    required: true,
-  },
-  level: {
-    type: String,
-    required: true,
-  },
-  demoUrl: {
-    type: String,
-    required: true,
-  },
-  benefits: {
-    type: [{ title: String }],
-    required: true,
-  },
-  prerequistites: {
-    type: [{ title: String }],
-    required: true,
-  },
-  reviews: [reviewSchema],
-  courseData: [courseDataSchema],
-  rating: {
-    type: Number,
-    default: 0,
-  },
-  purchased: {
-    type: Number,
-    default: 0,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const courseModel: Model<ICourse> = model("Course", courseSchema);
 export default courseModel;

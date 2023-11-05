@@ -10,6 +10,7 @@ import successRes from "./src/utils/SuccessRes";
 
 import analyticsRoute from "./src/routes/analylics.route";
 import courseRoute from "./src/routes/course.route";
+import layoutRoute from "./src/routes/layout.route";
 import notificationRoute from "./src/routes/notification.route";
 import orderRouter from "./src/routes/order.route";
 import userRouter from "./src/routes/user.route";
@@ -38,6 +39,7 @@ app.use("/api", courseRoute);
 app.use("/api", orderRouter);
 app.use("/api", notificationRoute);
 app.use("/api", analyticsRoute);
+app.use("/api", layoutRoute);
 
 //test route
 app.get("/", (req: Request, res: Response) => {

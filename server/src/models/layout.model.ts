@@ -1,34 +1,24 @@
 import { Schema, model } from "mongoose";
-import { IBannerImg, ICategory, IFaqItem, Layout } from "../../@types/layout";
+import { IBannerImg } from "../../@types/layout";
 
-const faqSchema = new Schema<IFaqItem>({
-  qustion: {
+const bannerSchema = new Schema<IBannerImg>({
+  public_id: {
     type: String,
+    required: true,
   },
-  answare: {
+  url: {
     type: String,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  subtitle: {
+    type: String,
+    required: true,
   },
 });
 
-const categorySchema = new Schema<ICategory>({
-  title: { type: String },
-});
-
-const bannerImageSchema = new Schema<IBannerImg>({
-  public_id: { type: String },
-  url: { type: String },
-});
-
-const layoutSchema = new Schema<Layout>({
-  type: { type: String },
-  faq: [faqSchema],
-  category: [categorySchema],
-  banner: {
-    image: bannerImageSchema,
-    title: { type: String },
-    subtitle: { type: String },
-  },
-});
-
-const LayoutModel = model<Layout>("Layout", layoutSchema);
-export default LayoutModel;
+const BannerModel = model<IBannerImg>("Layout", bannerSchema);
+export default BannerModel;

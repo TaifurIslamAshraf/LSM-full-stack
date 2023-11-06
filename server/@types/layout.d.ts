@@ -1,8 +1,6 @@
-import { Document } from "mongoose";
-
 export interface IFaqItem {
-  qustion: string;
-  answare: string;
+  question: string;
+  answer: string;
 }
 
 export interface ICategory {
@@ -10,17 +8,8 @@ export interface ICategory {
 }
 
 export interface IBannerImg {
-  public_id: string;
-  url: string;
-}
-
-export interface Layout extends Document {
-  type: string;
-  faq: IFaqItem[];
-  category: ICategory[];
-  banner: {
-    image: IBannerImg;
-    title: string;
-    subtitle: string;
-  };
+  title: string;
+  subtitle: string;
+  public_id?: string;
+  url?: string;
 }

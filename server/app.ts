@@ -9,7 +9,9 @@ import { ErrorMiddleware } from "./src/middlewares/error";
 import successRes from "./src/utils/SuccessRes";
 
 import analyticsRoute from "./src/routes/analylics.route";
+import categoryRouter from "./src/routes/category.route";
 import courseRoute from "./src/routes/course.route";
+import faqRouter from "./src/routes/faq.route";
 import layoutRoute from "./src/routes/layout.route";
 import notificationRoute from "./src/routes/notification.route";
 import orderRouter from "./src/routes/order.route";
@@ -40,6 +42,8 @@ app.use("/api", orderRouter);
 app.use("/api", notificationRoute);
 app.use("/api", analyticsRoute);
 app.use("/api", layoutRoute);
+app.use("/api", faqRouter);
+app.use("/api", categoryRouter);
 
 //test route
 app.get("/", (req: Request, res: Response) => {

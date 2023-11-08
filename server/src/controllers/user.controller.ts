@@ -195,13 +195,17 @@ export const updateAccessToken = CatchAsyncError(
       ) as JwtPayload;
 
       if (!decoded) {
-        return next(new ErrorHandler("Cloud not have refresh token", 400));
+        return next(
+          new ErrorHandler("Please login to access this recourse", 400)
+        );
       }
 
       const session = await redis.get(decoded._id);
 
       if (!session) {
-        return next(new ErrorHandler("Cloud not have refresh token", 400));
+        return next(
+          new ErrorHandler("Please login to access this recourse", 400)
+        );
       }
 
       const user = JSON.parse(session);
@@ -220,8 +224,12 @@ export const updateAccessToken = CatchAsyncError(
         { expiresIn: "3d" }
       );
 
+      res.locals.user = user;
+
       res.cookie("access_token", accessToken, accessTokenOption);
       res.cookie("refresh_token", refreshToken, refreshToeknOption);
+
+      await redis.set(user._id, JSON.stringify(user), "EX", 604800); //7 days
 
       res.status(200).json({
         success: true,

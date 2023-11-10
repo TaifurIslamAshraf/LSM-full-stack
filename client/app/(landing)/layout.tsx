@@ -3,7 +3,7 @@ import { IChildren } from "@/types/global";
 
 const LandingLayout = ({ children }: IChildren) => {
   return (
-    <div>
+    <div className="bg-background">
       <Header />
       {children}
     </div>

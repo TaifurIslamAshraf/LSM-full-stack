@@ -22,8 +22,8 @@ const Header = () => {
     <header className="w-full relative">
       <div
         className={cn(
-          "bg-secondary fixed top-5 left-0 right-0 w-[70%] m-auto h-[50px] md:h-[70px] z-50 border rounded-2xl transition-all px-3",
-          active ? "bg-secondary/90 shadow-md top-2" : ""
+          "bg-secondary md:fixed md:top-5 md:left-0 md:right-0 md:w-[80%] m-auto h-[50px] md:h-[70px] z-30 border md:rounded-2xl transition-all duration-100 px-3 static",
+          active ? "bg-secondary/90 shadow-md md:top-2" : ""
         )}
       >
         <div className="h-full">

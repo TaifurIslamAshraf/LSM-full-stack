@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { ModeToggle } from "./ToggleTheme";
 import { Button } from "./ui/button";
 
@@ -39,7 +39,11 @@ const NavItem = () => {
       <div className="md:flex hidden justify-center items-center gap-4">
         {navLink.map((item, i) => {
           return (
-            <Link href={item.path} key={i} className="px-1 font-semibold">
+            <Link
+              href={item.path}
+              key={i}
+              className="px-1 font-semibold hover:underline"
+            >
               {item.name}
             </Link>
           );
@@ -48,7 +52,7 @@ const NavItem = () => {
         <ModeToggle />
       </div>
       <div className="md:hidden mr-2 cursor-pointer">
-        <Menu size={30} onClick={handleToggle} />
+        <div onClick={handleToggle}>{toggle ? <X /> : <Menu size={30} />}</div>
         <div
           className={cn(
             "absolute left-0 p-4 w-full z-40 bg-secondary transition-all duration-500 space-y-2",
@@ -61,7 +65,7 @@ const NavItem = () => {
                 onClick={handleToggle}
                 href={item.path}
                 key={i}
-                className="py-3 text-center block font-semibold"
+                className="py-3 text-center block font-semibold hover:underline"
               >
                 {item.name}
               </Link>

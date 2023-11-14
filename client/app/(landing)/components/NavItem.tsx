@@ -5,8 +5,8 @@ import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
-import { ModeToggle } from "./ToggleTheme";
-import { Button } from "./ui/button";
+import { ModeToggle } from "../../../components/ToggleTheme";
+import { Button } from "../../../components/ui/button";
 
 const navLink = [
   {
@@ -63,6 +63,7 @@ const NavItem = () => {
             return (
               <Link
                 onClick={handleToggle}
+                passHref
                 href={item.path}
                 key={i}
                 className="py-3 text-center block font-semibold hover:underline"
@@ -72,7 +73,7 @@ const NavItem = () => {
             );
           })}
           <Button className="w-full">Login</Button>
-          <div className="flex items-center justify-between bg-muted border py-1 px-3">
+          <div className="flex items-center justify-between bg-muted border border-primary/20 py-2 rounded-md px-3">
             <p>Appearance</p>
             <ModeToggle />
           </div>

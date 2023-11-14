@@ -19,7 +19,7 @@ const Header = () => {
   }
 
   return (
-    <header className="w-full max-w-[1200px] relative">
+    <header className="w-full relative">
       <div
         className={cn(
           "bg-secondary md:fixed md:top-5 md:left-0 md:right-0 max-w-[1200px] md:w-[80%] m-auto h-[50px] md:h-[70px] z-30 border md:rounded-2xl transition-all duration-100 px-3 static",

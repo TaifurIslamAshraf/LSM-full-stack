@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import Header from "@/app/(landing)/components/Header";
 import { IChildren } from "@/types/global";
 
 const LandingLayout = ({ children }: IChildren) => {

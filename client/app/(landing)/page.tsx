@@ -1,5 +1,4 @@
-import Course from "@/components/Course";
-import Hero from "@/components/Hero";
+import Hero from "@/app/(landing)/components/Hero";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,11 +10,8 @@ export const metadata: Metadata = {
 const page = () => {
   return (
     <>
-      <div className="bg-red-500">
+      <div className="hero md:pt-20">
         <Hero />
-      </div>
-      <div className="">
-        <Course />
       </div>
     </>
   );

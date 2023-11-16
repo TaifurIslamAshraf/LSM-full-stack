@@ -4,9 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { Menu, UserCircle, X } from "lucide-react";
 import { ModeToggle } from "../../../components/ToggleTheme";
-import { Button } from "../../../components/ui/button";
 
 const navLink = [
   {
@@ -48,7 +47,9 @@ const NavItem = () => {
             </Link>
           );
         })}
-        <Button>Login</Button>
+        <Link href={"/login"} className="">
+          <UserCircle size={30} />
+        </Link>
         <ModeToggle />
       </div>
       <div className="md:hidden mr-2 cursor-pointer">
@@ -72,7 +73,13 @@ const NavItem = () => {
               </Link>
             );
           })}
-          <Button className="w-full">Login</Button>
+          <Link
+            href={"/login"}
+            className="w-full flex items-center justify-between bg-muted border border-primary/20 py-3 rounded-md px-3 hover:underline"
+          >
+            <p>Login Your Account</p>
+            <UserCircle size={30} />
+          </Link>
           <div className="flex items-center justify-between bg-muted border border-primary/20 py-2 rounded-md px-3">
             <p>Appearance</p>
             <ModeToggle />

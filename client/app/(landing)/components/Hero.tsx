@@ -6,7 +6,7 @@ const Hero = () => {
   return (
     <div className={cn(styles.section, styles.padding)}>
       <div className="text-center">
-        <h1 className="font-bold lg:text-6xl md:text-5xl sm:text-4xl text-3xl uppercase leading-10 text-blue-500">
+        <h1 className="font-bold lg:text-6xl md:text-5xl sm:text-4xl text-3xl uppercase leading-10 text-blue-500 mb-3">
           Skyrocket your
         </h1>
         <h1 className="font-bold lg:text-6xl md:text-5xl sm:text-4xl text-3xl uppercase leading-10 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">

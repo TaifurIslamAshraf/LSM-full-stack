@@ -4,8 +4,8 @@ import Register from "../components/Register";
 
 const page = () => {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center mt-32">
-      <Tabs defaultValue="signin" className="w-[400px]">
+    <div className="w-full h-full flex flex-col items-center justify-center mt-5 md:mt-32">
+      <Tabs defaultValue="signin" className="w-full max-w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="signin">Sign In</TabsTrigger>
           <TabsTrigger value="signup">Sign Up</TabsTrigger>

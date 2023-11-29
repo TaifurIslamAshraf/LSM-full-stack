@@ -22,8 +22,10 @@ import { Input } from "@/components/ui/input";
 import { TabsContent } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import Verification from "./Verification";
 
 const RegistetionFormSchema = z.object({
   fullName: z
@@ -38,6 +40,8 @@ const RegistetionFormSchema = z.object({
 });
 
 const Register = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const form = useForm<z.infer<typeof RegistetionFormSchema>>({
     resolver: zodResolver(RegistetionFormSchema),
     defaultValues: {
@@ -56,6 +60,13 @@ const Register = () => {
       email: "",
       password: "",
     });
+
+    const res = "ok";
+    res === "ok" && setIsOpen(true);
+  };
+
+  const onClose = () => {
+    setIsOpen(false);
   };
 
   const isLoading = form.formState.isSubmitting;
@@ -161,6 +172,9 @@ const Register = () => {
           </CardFooter>
         </Card>
       </TabsContent>
+      <div className="">
+        <Verification isOpen={isOpen} onClose={onClose} />
+      </div>
     </>
   );
 };

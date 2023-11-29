@@ -1,3 +1,5 @@
+import { Toaster } from "react-hot-toast";
+
 import ThemeProvider from "@/lib/ThemeProvider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -33,6 +35,7 @@ export default function RootLayout({
       <body className={cn(poppins.className)}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
+          <Toaster position="top-center" reverseOrder={false} />
         </ThemeProvider>
       </body>
     </html>

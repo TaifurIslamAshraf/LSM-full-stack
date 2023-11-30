@@ -1,6 +1,7 @@
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function LoadingButton({
   btnText = "Please wait",
@@ -10,8 +11,8 @@ export function LoadingButton({
   className?: string;
 }) {
   return (
-    <Button disabled>
-      <Loader2 className={`mr-2 h-4 w-4 animate-spin ${className}`} />
+    <Button disabled className={cn(className)}>
+      <Loader2 className={`mr-2 h-4 w-4 animate-spin`} />
       {btnText}
     </Button>
   );

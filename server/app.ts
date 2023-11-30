@@ -3,7 +3,6 @@ import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import path from "path";
 
-import config from "./src/config/config";
 import connectDB from "./src/config/db";
 import { ErrorMiddleware } from "./src/middlewares/error";
 import successRes from "./src/utils/SuccessRes";
@@ -33,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 //cors
-app.use(cors({ origin: config.origin }));
+app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
 
 //all routes
 app.use("/api", userRouter);

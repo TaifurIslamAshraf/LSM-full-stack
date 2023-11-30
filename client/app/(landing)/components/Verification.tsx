@@ -18,6 +18,7 @@ import { KeyRound } from "lucide-react";
 interface VerificationProps {
   isOpen: boolean;
   onClose?: () => void;
+  message: string;
 }
 
 type IVerifyNumber = {
@@ -27,9 +28,9 @@ type IVerifyNumber = {
   "3": string;
 };
 
-const Verification = ({ isOpen, onClose }: VerificationProps) => {
+const Verification = ({ isOpen, onClose, message }: VerificationProps) => {
   const [isMounted, setIsModunted] = useState(false);
-  const [invalidError, setInvalidError] = useState<boolean>(true);
+  const [invalidError, setInvalidError] = useState<boolean>(false);
   const [verifyNumber, setVerifyNumber] = useState<IVerifyNumber>({
     0: "",
     1: "",
@@ -57,6 +58,7 @@ const Verification = ({ isOpen, onClose }: VerificationProps) => {
 
   const verificationHandler = async () => {
     console.log(verifyNumber);
+    setInvalidError(true);
   };
 
   useEffect(() => {
@@ -73,7 +75,7 @@ const Verification = ({ isOpen, onClose }: VerificationProps) => {
         <DialogHeader>
           <DialogTitle>Verify Your Account</DialogTitle>
           <DialogDescription>
-            We send a mail. Check you mail for verification code
+            <div className="text-green-400">{message}</div>
             <div className="w-[40px] h-[40px] mx-auto mt-1 bg-primary-foreground rounded-full ">
               <KeyRound size={35} className="text-blue-500 m-auto" />
             </div>
@@ -92,7 +94,7 @@ const Verification = ({ isOpen, onClose }: VerificationProps) => {
                 value={verifyNumber[key as keyof IVerifyNumber]}
                 onChange={(e) => handleInputChange(index, e.target.value)}
                 className={cn(
-                  "sm:w-[60px] sm:h-[60px] w-[40px] h-[40px] bg-transparent",
+                  "sm:w-[60px] sm:h-[60px] w-[40px] h-[40px] text-center bg-transparent",
                   invalidError ? "shake border-red-500" : ""
                 )}
               />

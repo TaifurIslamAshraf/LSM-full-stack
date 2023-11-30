@@ -20,10 +20,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TabsContent } from "@/components/ui/tabs";
+import { useRegisterMutation } from "@/redux/features/auth/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import * as z from "zod";
 import Verification from "./Verification";
 
@@ -41,6 +43,8 @@ const RegistetionFormSchema = z.object({
 
 const Register = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [register, { isError, isSuccess, data, error, isLoading }] =
+    useRegisterMutation();
 
   const form = useForm<z.infer<typeof RegistetionFormSchema>>({
     resolver: zodResolver(RegistetionFormSchema),
@@ -51,25 +55,34 @@ const Register = () => {
     },
   });
 
+  useEffect(() => {
+    if (isSuccess) {
+      const message = "Enter Verification Code";
+      toast.success(message);
+      setIsOpen(true);
+    } else if (error) {
+      const errorData = error as any;
+      const message = errorData?.data.message as any;
+      toast.error(message);
+    }
+  }, [data?.message, error, isError, isSuccess]);
+
   const RegistationHandler = async (
     data: z.infer<typeof RegistetionFormSchema>
   ) => {
-    console.log(data);
-    form.reset({
-      fullName: "",
-      email: "",
-      password: "",
-    });
-
-    const res = "ok";
-    res === "ok" && setIsOpen(true);
+    register(data);
+    if (isSuccess) {
+      form.reset({
+        fullName: "",
+        email: "",
+        password: "",
+      });
+    }
   };
 
   const onClose = () => {
     setIsOpen(false);
   };
-
-  const isLoading = form.formState.isSubmitting;
 
   return (
     <>
@@ -173,7 +186,11 @@ const Register = () => {
         </Card>
       </TabsContent>
       <div className="">
-        <Verification isOpen={isOpen} onClose={onClose} />
+        <Verification
+          isOpen={isOpen}
+          onClose={onClose}
+          message={data?.message}
+        />
       </div>
     </>
   );

@@ -104,7 +104,6 @@ export const activateUser = CatchAsyncError(
       if (newUser.activationCode !== activation_code) {
         return next(new ErrorHandler("Invalid activation code", 400));
       }
-      console.log(newUser.user.avatar);
 
       //user data save in database
       const { name, email, password, avatar, isSocialAuth } = newUser.user;

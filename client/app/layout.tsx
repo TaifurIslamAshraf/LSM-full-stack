@@ -4,6 +4,7 @@ import ThemeProvider from "@/lib/ThemeProvider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter, Josefin_Sans, Poppins } from "next/font/google";
+import { ReduxProviders } from "./Provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -33,10 +34,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(poppins.className)}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-          <Toaster position="top-center" reverseOrder={false} />
-        </ThemeProvider>
+        <ReduxProviders>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+            <Toaster position="top-center" reverseOrder={false} />
+          </ThemeProvider>
+        </ReduxProviders>
       </body>
     </html>
   );

@@ -70,14 +70,12 @@ const Register = () => {
   const RegistationHandler = async (
     data: z.infer<typeof RegistetionFormSchema>
   ) => {
-    register(data);
-    if (isSuccess) {
-      form.reset({
-        fullName: "",
-        email: "",
-        password: "",
-      });
-    }
+    register({
+      name: data.fullName,
+      email: data.email,
+      password: data.password,
+      isSocialAuth: false,
+    });
   };
 
   const onClose = () => {
@@ -190,6 +188,7 @@ const Register = () => {
           isOpen={isOpen}
           onClose={onClose}
           message={data?.message}
+          setIsOpen={setIsOpen}
         />
       </div>
     </>

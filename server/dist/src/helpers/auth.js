@@ -29,17 +29,17 @@ exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, nex
     }
     const user = yield redis_1.redis.get(decoded._id);
     if (!user) {
-        return next(new errorHandler_1.default("User not found", 404));
+        return next(new errorHandler_1.default("Please login to access this resourse", 404));
     }
-    req.user = JSON.parse(user);
+    res.locals.user = JSON.parse(user);
     next();
 }));
 //user validatior
 const authorizedUser = (...roles) => {
     return (req, res, next) => {
         var _a, _b;
-        if (!roles.includes(((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) || "")) {
-            return next(new errorHandler_1.default(`${(_b = req.user) === null || _b === void 0 ? void 0 : _b.role} is not allowed to access this resource`, 403));
+        if (!roles.includes((_a = res.locals.user) === null || _a === void 0 ? void 0 : _a.role) || "") {
+            return next(new errorHandler_1.default(`${(_b = res.locals.user) === null || _b === void 0 ? void 0 : _b.role} is not allowed to access this resource`, 403));
         }
         next();
     };

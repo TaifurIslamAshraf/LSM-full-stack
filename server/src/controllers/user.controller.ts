@@ -245,7 +245,6 @@ export const getUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = res.locals.user?._id;
-      console.log(userId);
 
       getUserbyId(userId, res);
     } catch (error: any) {

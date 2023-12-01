@@ -4,8 +4,6 @@ import mongoose, { Model, Schema } from "mongoose";
 import { IUser } from "../../@types/user.model";
 import config from "../config/config";
 
-const emailRegexValidtor: RegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-
 const userSchema: Schema<IUser> = new mongoose.Schema(
   {
     name: {
@@ -16,12 +14,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type: String,
       required: [true, "Please enter your email"],
       unique: true,
-      validate: {
-        validator: (value: string) => {
-          return emailRegexValidtor.test(value);
-        },
-        message: "Please enter a valid email",
-      },
     },
 
     password: {

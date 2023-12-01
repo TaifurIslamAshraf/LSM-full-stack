@@ -15,10 +15,17 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { KeyRound } from "lucide-react";
 
+import { LoadingButton } from "@/components/LoaderButton";
+import { useActivationMutation } from "@/redux/features/auth/authApi";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+
 interface VerificationProps {
   isOpen: boolean;
   onClose?: () => void;
   message: string;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type IVerifyNumber = {
@@ -28,7 +35,12 @@ type IVerifyNumber = {
   "3": string;
 };
 
-const Verification = ({ isOpen, onClose, message }: VerificationProps) => {
+const Verification = ({
+  isOpen,
+  setIsOpen,
+  onClose,
+  message,
+}: VerificationProps) => {
   const [isMounted, setIsModunted] = useState(false);
   const [invalidError, setInvalidError] = useState<boolean>(false);
   const [verifyNumber, setVerifyNumber] = useState<IVerifyNumber>({
@@ -37,7 +49,10 @@ const Verification = ({ isOpen, onClose, message }: VerificationProps) => {
     2: "",
     3: "",
   });
-
+  const [activation, { error, isLoading, isSuccess, data }] =
+    useActivationMutation();
+  const route = useRouter();
+  const { token } = useSelector((state: any) => state.auth);
   const inputRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -56,9 +71,30 @@ const Verification = ({ isOpen, onClose, message }: VerificationProps) => {
     }
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Account activation successfully");
+      setInvalidError(false);
+      setIsOpen(false);
+      window.location.reload();
+    }
+    if (error) {
+      setInvalidError(true);
+      const errorMsg = error as any;
+      toast.error(errorMsg.data.message);
+    }
+  }, [error, isSuccess, route, setIsOpen]);
+
   const verificationHandler = async () => {
-    console.log(verifyNumber);
-    setInvalidError(true);
+    const verificationNumber = Object.values(verifyNumber).join("");
+    if (verificationNumber.length !== 4) {
+      setInvalidError(true);
+      return;
+    }
+    await activation({
+      activation_token: token,
+      activation_code: verificationNumber,
+    });
   };
 
   useEffect(() => {
@@ -75,7 +111,7 @@ const Verification = ({ isOpen, onClose, message }: VerificationProps) => {
         <DialogHeader>
           <DialogTitle>Verify Your Account</DialogTitle>
           <DialogDescription>
-            <div className="text-green-400">{message}</div>
+            <div className="text-green-700">{message}</div>
             <div className="w-[40px] h-[40px] mx-auto mt-1 bg-primary-foreground rounded-full ">
               <KeyRound size={35} className="text-blue-500 m-auto" />
             </div>
@@ -100,13 +136,17 @@ const Verification = ({ isOpen, onClose, message }: VerificationProps) => {
               />
             ))}
           </div>
-          <Button
-            className="w-full mt-5"
-            variant={"outline"}
-            onClick={verificationHandler}
-          >
-            Verify OTP
-          </Button>
+          {isLoading ? (
+            <LoadingButton variant="outline" className="w-full" />
+          ) : (
+            <Button
+              className="w-full mt-5"
+              variant={"outline"}
+              onClick={verificationHandler}
+            >
+              Verify OTP
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>

@@ -21,10 +21,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import * as z from "zod";
 
 const LoginFormSchema = z.object({
@@ -44,16 +47,26 @@ const Login = () => {
       password: "",
     },
   });
-
-  const isLoading = form.formState.isSubmitting;
+  const [login, { isLoading, isError, isSuccess, data, error }] =
+    useLoginMutation();
 
   const onSubmitLogin = async (data: z.infer<typeof LoginFormSchema>) => {
-    console.log(data);
-    form.reset({
-      email: "",
-      password: "",
-    });
+    login(data);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Login successfull");
+      router.replace("/");
+      form.reset({
+        email: "",
+        password: "",
+      });
+    } else if (error) {
+      const errorData = error as any;
+      toast.error(errorData.data.message);
+    }
+  }, [data, error, form, isSuccess, router]);
 
   return (
     <>

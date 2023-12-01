@@ -5,7 +5,11 @@ import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Menu, UserCircle, X } from "lucide-react";
+import Image from "next/image";
+import { useSelector } from "react-redux";
 import { ModeToggle } from "../../../components/ToggleTheme";
+
+import defaultAvater from "@/public/avater.png";
 
 const navLink = [
   {
@@ -28,6 +32,7 @@ const navLink = [
 
 const NavItem = () => {
   const [toggle, setToggle] = useState(false);
+  const { user } = useSelector((state: any) => state.auth);
 
   const handleToggle = () => {
     setToggle(!toggle);
@@ -47,9 +52,23 @@ const NavItem = () => {
             </Link>
           );
         })}
-        <Link href={"/login"} className="">
-          <UserCircle size={30} />
-        </Link>
+        {user ? (
+          <>
+            <Link href={"/profile"}>
+              <Image
+                className="cursor-pointer"
+                src={user.avater ? user.avater.public_url : defaultAvater}
+                alt="default avater"
+                height={35}
+                width={35}
+              />
+            </Link>
+          </>
+        ) : (
+          <Link href={"/login"} className="">
+            <UserCircle size={30} />
+          </Link>
+        )}
         <ModeToggle />
       </div>
       <div className="md:hidden mr-2 cursor-pointer">

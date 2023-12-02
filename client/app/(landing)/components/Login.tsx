@@ -27,6 +27,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 import * as z from "zod";
 import SocialAuth from "./SocialAuth";
 
@@ -40,6 +41,8 @@ const LoginFormSchema = z.object({
 
 const Login = () => {
   const router = useRouter();
+  const { user } = useSelector((state: any) => state.auth);
+
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -65,8 +68,10 @@ const Login = () => {
     } else if (error) {
       const errorData = error as any;
       toast.error(errorData.data.message);
+    } else if (user.name) {
+      router.replace("/");
     }
-  }, [data, error, form, isSuccess, router]);
+  }, [data, error, form, isSuccess, router, user]);
 
   return (
     <>

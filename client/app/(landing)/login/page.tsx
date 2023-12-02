@@ -2,6 +2,7 @@
 
 import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -10,10 +11,11 @@ import Login from "../components/Login";
 import Register from "../components/Register";
 
 const Page = () => {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const { user } = useSelector((state: any) => state.auth);
   const [socialAuth, { isError, error, isSuccess }] = useSocialAuthMutation();
-  console.log(user);
+
   useEffect(() => {
     if (!user.name) {
       if (session) {
@@ -25,10 +27,11 @@ const Page = () => {
           },
         });
       } else if (isSuccess) {
+        router.replace("/");
         toast.success("Login successfully");
       }
     }
-  }, [isSuccess, session, socialAuth, user]);
+  }, [isSuccess, router, session, socialAuth, user]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center mt-5 md:mt-32">

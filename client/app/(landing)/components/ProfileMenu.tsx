@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 
 const ProfileMenu = () => {
   const { user } = useSelector((state: any) => state.auth);
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

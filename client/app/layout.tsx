@@ -1,5 +1,6 @@
 import { Toaster } from "react-hot-toast";
 
+import Loader from "@/components/Loader";
 import AuthProvider from "@/lib/AuthProvider";
 import ThemeProvider from "@/lib/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -38,7 +39,7 @@ export default function RootLayout({
         <ReduxProviders>
           <AuthProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
+              <Loader>{children}</Loader>
               <Toaster position="top-center" reverseOrder={false} />
             </ThemeProvider>
           </AuthProvider>

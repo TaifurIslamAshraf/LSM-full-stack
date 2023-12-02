@@ -23,12 +23,12 @@ import { TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
+import AuthProvider from "./AuthProvider";
 
 const LoginFormSchema = z.object({
   email: z.string().min(1, "Email is Required").email("Enter a valid email"),
@@ -122,33 +122,7 @@ const Login = () => {
             </Form>
           </CardContent>
           <CardFooter className="">
-            <div className="w-full space-y-2">
-              <div className="">
-                <p className="text-center font-semibold my-4 border">OR</p>
-                <Button className="w-full bg-secondary-foreground/80">
-                  <Image
-                    className="mr-2"
-                    src="/google-logo.svg"
-                    alt="google logo"
-                    height={30}
-                    width={40}
-                  />
-                  Sign In with Google
-                </Button>
-              </div>
-              <div className="">
-                <Button className="w-full bg-secondary-foreground/80">
-                  <Image
-                    className="mr-3"
-                    src="/github.svg"
-                    alt="github logo"
-                    height={30}
-                    width={30}
-                  />
-                  Sign In with Github
-                </Button>
-              </div>
-            </div>
+            <AuthProvider />
           </CardFooter>
         </Card>
       </TabsContent>

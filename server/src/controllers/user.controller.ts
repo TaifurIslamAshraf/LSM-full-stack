@@ -261,7 +261,6 @@ export const socialAuth = CatchAsyncError(
       if (!name || !email || !avatar) {
         return next(new ErrorHandler("All field are required", 400));
       }
-
       const user = await userModel.findOne({ email });
 
       if (!user) {
@@ -271,7 +270,6 @@ export const socialAuth = CatchAsyncError(
           avatar,
           isSocialAuth: true,
         });
-
         sendToken(newUser, 201, res);
       } else {
         sendToken(user, 200, res);

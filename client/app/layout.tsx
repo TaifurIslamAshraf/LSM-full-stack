@@ -1,10 +1,11 @@
 import { Toaster } from "react-hot-toast";
 
+import AuthProvider from "@/lib/AuthProvider";
 import ThemeProvider from "@/lib/ThemeProvider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter, Josefin_Sans, Poppins } from "next/font/google";
-import { ReduxProviders } from "./Provider";
+import { ReduxProviders } from "../lib/Provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,10 +36,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(poppins.className)}>
         <ReduxProviders>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-            <Toaster position="top-center" reverseOrder={false} />
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              {children}
+              <Toaster position="top-center" reverseOrder={false} />
+            </ThemeProvider>
+          </AuthProvider>
         </ReduxProviders>
       </body>
     </html>

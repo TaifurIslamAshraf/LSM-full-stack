@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { cn } from "@/lib/utils";
 import { Menu, UserCircle, X } from "lucide-react";
-import Image from "next/image";
 import { useSelector } from "react-redux";
 import { ModeToggle } from "../../../components/ToggleTheme";
 
-import defaultAvater from "@/public/avater.png";
+import { cn } from "@/lib/utils";
+import ProfileMenu from "./ProfileMenu";
 
 const navLink = [
   {
@@ -52,18 +51,8 @@ const NavItem = () => {
             </Link>
           );
         })}
-        {user ? (
-          <>
-            <Link href={"/profile"}>
-              <Image
-                className="cursor-pointer"
-                src={user.avater ? user.avater.public_url : defaultAvater}
-                alt="default avater"
-                height={35}
-                width={35}
-              />
-            </Link>
-          </>
+        {user.name ? (
+          <ProfileMenu />
         ) : (
           <Link href={"/login"} className="">
             <UserCircle size={30} />
@@ -92,13 +81,20 @@ const NavItem = () => {
               </Link>
             );
           })}
-          <Link
-            href={"/login"}
-            className="w-full flex items-center justify-between bg-muted border border-primary/20 py-3 rounded-md px-3 hover:underline"
-          >
-            <p>Login Your Account</p>
-            <UserCircle size={30} />
-          </Link>
+          {user.name ? (
+            <div className="w-full flex items-center justify-between bg-muted border border-primary/20 py-3 rounded-md px-3 cursor-default">
+              <p>Logout from here</p>
+              <ProfileMenu />
+            </div>
+          ) : (
+            <Link
+              href={"/login"}
+              className="w-full flex items-center justify-between bg-muted border border-primary/20 py-3 rounded-md px-3 hover:underline"
+            >
+              <p>Login Your Account</p>
+              <UserCircle size={30} />
+            </Link>
+          )}
           <div className="flex items-center justify-between bg-muted border border-primary/20 py-2 rounded-md px-3">
             <p>Appearance</p>
             <ModeToggle />

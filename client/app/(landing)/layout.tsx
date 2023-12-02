@@ -1,7 +1,7 @@
 import Header from "@/app/(landing)/components/Header";
 import { IChildren } from "@/types/global";
 
-const LandingLayout = ({ children }: IChildren) => {
+const LandingLayout = async ({ children }: IChildren) => {
   return (
     <div className="bg-background">
       <Header />

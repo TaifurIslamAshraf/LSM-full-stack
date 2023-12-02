@@ -178,7 +178,6 @@ exports.getUserInfo = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) =
     var _b;
     try {
         const userId = (_b = res.locals.user) === null || _b === void 0 ? void 0 : _b._id;
-        console.log(userId);
         (0, user_service_1.getUserbyId)(userId, res);
     }
     catch (error) {

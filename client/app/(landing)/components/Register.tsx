@@ -26,7 +26,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
-import AuthProvider from "./AuthProvider";
+import SocialAuth from "./SocialAuth";
 import Verification from "./Verification";
 
 const RegistetionFormSchema = z.object({
@@ -153,7 +153,7 @@ const Register = () => {
             </Form>
           </CardContent>
           <CardFooter className="">
-            <AuthProvider />
+            <SocialAuth />
           </CardFooter>
         </Card>
       </TabsContent>

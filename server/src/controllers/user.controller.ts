@@ -31,12 +31,18 @@ export const registerUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       //get data from body
-      const { name, email, password, avatar, isSocialAuth } =
-        req.body as IActivationInfo;
+      const { name, email, password, avatar } = req.body as IActivationInfo;
 
       //is Exist email
-      const isExist = await userModel.exists({ email });
-      if (isExist) {
+      const user = await userModel.findOne({ email });
+
+      if (user?.isSocialAuth) {
+        return next(
+          new ErrorHandler("You are alredy sign in with google or github", 400)
+        );
+      }
+
+      if (user) {
         return next(new ErrorHandler("User alredy exist", 400));
       }
 
@@ -46,7 +52,7 @@ export const registerUser = CatchAsyncError(
         email: email,
         password: password,
         avatar: avatar,
-        isSocialAuth: isSocialAuth,
+        isSocialAuth: false,
       };
 
       const { token, activationCode } = createActivationToken(activationInfo);
@@ -144,6 +150,12 @@ export const loginUser = CatchAsyncError(
       }
 
       const user = await userModel.findOne({ email }).select("+password");
+
+      if (user?.isSocialAuth) {
+        return next(
+          new ErrorHandler("You are sign in with google or github", 400)
+        );
+      }
 
       if (!user) {
         return next(new ErrorHandler("Invalid email or password", 400));

@@ -27,10 +27,10 @@ const ProfileMenu = () => {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>
+        <DropdownMenuItem className="block">
           <Link href="/profile">Profile</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuItem className="block">Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

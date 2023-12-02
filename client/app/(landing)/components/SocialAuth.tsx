@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
-const AuthProvider = () => {
+const SocialAuth = () => {
   return (
     <div className="w-full space-y-2">
       <div className="">
@@ -43,4 +43,4 @@ const AuthProvider = () => {
   );
 };
 
-export default AuthProvider;
+export default SocialAuth;

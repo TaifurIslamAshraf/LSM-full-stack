@@ -28,7 +28,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
-import AuthProvider from "./AuthProvider";
+import SocialAuth from "./SocialAuth";
 
 const LoginFormSchema = z.object({
   email: z.string().min(1, "Email is Required").email("Enter a valid email"),
@@ -122,7 +122,7 @@ const Login = () => {
             </Form>
           </CardContent>
           <CardFooter className="">
-            <AuthProvider />
+            <SocialAuth />
           </CardFooter>
         </Card>
       </TabsContent>

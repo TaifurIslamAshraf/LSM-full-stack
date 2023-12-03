@@ -11,7 +11,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
-//when our app reload every time call every time this function
+//when our app reload every time call this function
 const initializeApp = async () => {
   await store.dispatch(
     apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true })

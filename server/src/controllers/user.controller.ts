@@ -178,13 +178,13 @@ export const loginUser = CatchAsyncError(
 export const logoutUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.cookie("access_token", "", { maxAge: 1 });
-      res.cookie("refresh_token", "", { maxAge: 1 });
+      console.log("hi");
+      res.clearCookie("refresh_token");
+      res.clearCookie("access_token");
 
       const userId = res.locals.user?._id || "";
 
       redis.del(userId);
-
       res.status(200).json({
         success: true,
         message: "Logout successfull",

@@ -1,9 +1,12 @@
 "use client";
 
-import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
+import {
+  useLogoutQuery,
+  useSocialAuthMutation,
+} from "@/redux/features/auth/authApi";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Tabs, TabsList, TabsTrigger } from "../../../components/ui/tabs";
@@ -15,10 +18,14 @@ const Page = () => {
   const { data: session, status } = useSession();
   const { user } = useSelector((state: any) => state.auth);
   const [socialAuth, { isError, error, isSuccess }] = useSocialAuthMutation();
+  const [isLogout, setIsLogout] = useState(false);
+  const {} = useLogoutQuery(undefined, {
+    skip: !isLogout,
+  });
 
   useEffect(() => {
     if (!user.name) {
-      if (session) {
+      if (session?.user) {
         socialAuth({
           name: session.user?.name,
           email: session.user?.email,
@@ -29,6 +36,8 @@ const Page = () => {
       } else if (isSuccess) {
         router.replace("/");
         toast.success("Login successfully");
+      } else if (session === null) {
+        setIsLogout(true);
       }
     }
   }, [isSuccess, router, session, socialAuth, user]);

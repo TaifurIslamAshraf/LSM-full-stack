@@ -50,8 +50,7 @@ const Login = () => {
       password: "",
     },
   });
-  const [login, { isLoading, isError, isSuccess, data, error }] =
-    useLoginMutation();
+  const [login, { isLoading, isSuccess, error }] = useLoginMutation();
 
   const onSubmitLogin = async (data: z.infer<typeof LoginFormSchema>) => {
     login(data);
@@ -61,17 +60,13 @@ const Login = () => {
     if (isSuccess) {
       toast.success("Login successfull");
       router.replace("/");
-      form.reset({
-        email: "",
-        password: "",
-      });
     } else if (error) {
       const errorData = error as any;
       toast.error(errorData.data.message);
     } else if (user.name) {
       router.replace("/");
     }
-  }, [data, error, form, isSuccess, router, user]);
+  }, [error, isSuccess, router, user.name]);
 
   return (
     <>

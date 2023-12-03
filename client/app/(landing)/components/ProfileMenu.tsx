@@ -9,11 +9,28 @@ import {
 import Image from "next/image";
 
 import defaultAvater from "@/public/default-avater.jpg";
+import { useLogoutQuery } from "@/redux/features/auth/authApi";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 const ProfileMenu = () => {
+  const [isLogout, setIsLogout] = useState(false);
+
   const { user } = useSelector((state: any) => state.auth);
+  const {} = useLogoutQuery(undefined, {
+    skip: !isLogout,
+  });
+
+  const handleLogout = async () => {
+    setIsLogout(true);
+    await signOut();
+    toast.success("Logout successfull");
+  };
+  console.log(isLogout, "logout");
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,7 +48,10 @@ const ProfileMenu = () => {
             Profile
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem className="block cursor-pointer">
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="block cursor-pointer"
+        >
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

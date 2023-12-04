@@ -66,7 +66,8 @@ const Login = () => {
     } else if (user.name) {
       router.replace("/");
     }
-  }, [error, isSuccess, router, user.name]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error, user.name]);
 
   return (
     <>

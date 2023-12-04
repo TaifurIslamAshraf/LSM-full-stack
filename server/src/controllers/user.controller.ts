@@ -178,7 +178,6 @@ export const loginUser = CatchAsyncError(
 export const logoutUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("hi");
       res.clearCookie("refresh_token");
       res.clearCookie("access_token");
 
@@ -377,7 +376,6 @@ export const updateAvatar = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { avatar } = req.body as IUpdateProfile;
-
       if (!avatar) {
         return next(new ErrorHandler("avatar is required", 400));
       }
@@ -395,7 +393,7 @@ export const updateAvatar = CatchAsyncError(
         );
       }
 
-      //frist delete ole one
+      //frist delete old one
       if (user?.avatar?.public_id) {
         await cloudinary.v2.uploader.destroy(user?.avatar?.public_id);
       }

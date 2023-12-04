@@ -1,27 +1,17 @@
 "use client";
 
-import {
-  useLogoutQuery,
-  useSocialAuthMutation,
-} from "@/redux/features/auth/authApi";
+import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Tabs, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
 const Page = () => {
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { user } = useSelector((state: any) => state.auth);
-  const [socialAuth, { isError, error, isSuccess }] = useSocialAuthMutation();
-  const [isLogout, setIsLogout] = useState(false);
-  const {} = useLogoutQuery(undefined, {
-    skip: !isLogout,
-  });
+  const [socialAuth, {}] = useSocialAuthMutation();
 
   useEffect(() => {
     if (!user.name) {
@@ -33,14 +23,9 @@ const Page = () => {
             url: session.user?.image,
           },
         });
-      } else if (isSuccess) {
-        router.replace("/");
-        toast.success("Login successfully");
-      } else if (session === null) {
-        setIsLogout(true);
       }
     }
-  }, [isSuccess, router, session, socialAuth, user]);
+  }, [session, socialAuth, user.name]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center mt-5 md:mt-32">

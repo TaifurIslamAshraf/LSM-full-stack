@@ -29,7 +29,6 @@ const ProfileMenu = () => {
     await signOut();
     toast.success("Logout successfull");
   };
-  console.log(isLogout, "logout");
 
   return (
     <DropdownMenu>

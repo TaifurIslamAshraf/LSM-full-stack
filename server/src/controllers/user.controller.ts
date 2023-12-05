@@ -351,7 +351,6 @@ export const updatePassword = CatchAsyncError(
       }
 
       const isPasswordMatch = await user.comparePassword(oldPassword);
-      console.log(isPasswordMatch);
 
       if (!isPasswordMatch) {
         return next(new ErrorHandler("Invalid old Password", 400));

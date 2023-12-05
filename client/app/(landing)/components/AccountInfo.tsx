@@ -14,7 +14,6 @@ import Image from "next/image";
 import { LoadingButton } from "@/components/LoaderButton";
 import { cn } from "@/lib/utils";
 import defaultAvater from "@/public/default-avater.jpg";
-import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
 import {
   useUpdateProfileMutation,
   useUpdateUserInfoMutation,
@@ -28,7 +27,6 @@ import { useSelector } from "react-redux";
 const AccountInfo = () => {
   const { user } = useSelector((state: any) => state.auth);
   const [name, setName] = useState(user.name && user.name);
-  const [validate, setValidate] = useState(false);
 
   const [updateProfile, { isSuccess, error, isLoading, data }] =
     useUpdateProfileMutation();
@@ -36,12 +34,6 @@ const AccountInfo = () => {
     updateUserInfo,
     { isSuccess: nameIsSuccess, isLoading: nameIsLoading, data: nameData },
   ] = useUpdateUserInfoMutation();
-  const { isSuccess: success } = useLoadUserQuery(
-    {},
-    {
-      skip: !validate,
-    }
-  );
 
   const router = useRouter();
   const handleImage = (e: any) => {
@@ -57,21 +49,17 @@ const AccountInfo = () => {
 
   const handleName = () => {
     updateUserInfo({ name });
-    console.log("first");
   };
 
   useEffect(() => {
     if (nameIsSuccess) {
-      setValidate(true);
       toast.success(nameData.message);
     }
   }, [nameData, nameIsSuccess]);
 
   useEffect(() => {
     if (isSuccess) {
-      setValidate(true);
       toast.success(data.message);
-      window.location.reload();
     }
     if (error) {
       const errorData = error as any;

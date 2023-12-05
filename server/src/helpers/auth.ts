@@ -8,17 +8,17 @@ import ErrorHandler from "../utils/errorHandler";
 
 export const isAuthenticated = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const access_token = req.cookies.access_token as string;
+    const refresh_token = req.cookies.refresh_token as string;
 
-    if (!access_token) {
+    if (!refresh_token) {
       return next(
         new ErrorHandler("Please login to access this resource", 400)
       );
     }
 
     const decoded = jwt.verify(
-      access_token,
-      config.accessTokenSecret
+      refresh_token,
+      config.refreshTokenSecret
     ) as JwtPayload;
 
     if (!decoded) {

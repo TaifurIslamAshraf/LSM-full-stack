@@ -321,6 +321,7 @@ export const updateUserInfo = CatchAsyncError(
 
       res.status(201).json({
         success: true,
+        message: "User info update successfully",
         user,
       });
     } catch (error: any) {
@@ -413,6 +414,7 @@ export const updateAvatar = CatchAsyncError(
 
       res.status(200).json({
         success: true,
+        message: "Profile update successfully",
         user,
       });
     } catch (error: any) {

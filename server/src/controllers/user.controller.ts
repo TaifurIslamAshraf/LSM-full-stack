@@ -452,6 +452,8 @@ export const updateUserRole = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
+      await redis.set(id, JSON.stringify(user));
+
       res.status(200).json({
         success: true,
         user,

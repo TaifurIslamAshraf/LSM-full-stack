@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 
+import { Separator } from "@/components/ui/separator";
 import defaultAvater from "@/public/default-avater.jpg";
 import { useLogoutQuery } from "@/redux/features/auth/authApi";
 import { signOut } from "next-auth/react";
@@ -42,11 +43,19 @@ const ProfileMenu = () => {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {user.name && user.role === "admin" && (
+          <Link href="/dashboard">
+            <DropdownMenuItem className="block cursor-pointer">
+              Dashboard
+            </DropdownMenuItem>
+          </Link>
+        )}
         <Link href="/profile">
           <DropdownMenuItem className="block cursor-pointer">
             Profile
           </DropdownMenuItem>
         </Link>
+        <Separator className="mb-2" />
         <DropdownMenuItem
           onClick={handleLogout}
           className="block cursor-pointer"

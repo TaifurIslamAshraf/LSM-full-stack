@@ -403,6 +403,43 @@ export const forgotPassword = CatchAsyncError(
     }
   }
 );
+//forgot password
+export const resetPasswordLinkValiditi = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId, token } = req.params;
+
+      if (!userId || !token) {
+        return res
+          .status(400)
+          .sendFile(
+            path.join(__dirname + "/../../views/linkValidationError.html")
+          );
+      }
+
+      try {
+        const decoded: any = jwt.verify(token, config.jwtSecret);
+        if (!decoded) {
+          return res
+            .status(400)
+            .sendFile(
+              path.join(__dirname + "/../../views/linkValidationError.html")
+            );
+        }
+      } catch (error) {
+        return res
+          .status(400)
+          .sendFile(
+            path.join(__dirname + "/../../views/linkValidationError.html")
+          );
+      }
+
+      res.redirect(`${config.clientUrl}/resetPassword/${userId}/${token}`);
+    } catch (error: any) {
+      return next(new ErrorHandler(`link validation -- ${error.message}`, 400));
+    }
+  }
+);
 //reset password
 export const resetPassword = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {

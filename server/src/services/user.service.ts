@@ -23,13 +23,13 @@ export const getUserbyId = async (id: string, res: Response) => {
 };
 
 export const forgotPasswordService = async (userId: string, email: string) => {
-  const clientUrl = config.clientUrl;
+  const serverUrl = config.serverUrl;
 
   const token = jwt.sign({ _id: userId }, config.jwtSecret, {
     expiresIn: "5m",
   });
 
-  const forgotPasswordLink = `${clientUrl}/resetPassword/${userId}/${token}`;
+  const forgotPasswordLink = `${serverUrl}/api/reset-password-link-validation/${userId}/${token}`;
 
   const html = await ejs.renderFile(
     path.join(__dirname + "../../../views/forgot-password.ejs"),

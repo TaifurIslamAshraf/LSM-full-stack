@@ -6,6 +6,7 @@ const config = {
   PORT: process.env.PORT,
   origin: process.env.ORIGIN,
   clientUrl: process.env.CLIENT_URL,
+  serverUrl: process.env.SERVER_URL,
 
   dbUrl: process.env.DB_URI,
   redisUrl: process.env.REDIS_URL,

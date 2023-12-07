@@ -9,6 +9,7 @@ import {
   logoutUser,
   registerUser,
   resetPassword,
+  resetPasswordLinkValiditi,
   socialAuth,
   updateAccessToken,
   updateAvatar,
@@ -31,6 +32,10 @@ router.post("/social-auth", socialAuth);
 router.put("/update-user-info", isAuthenticated, updateUserInfo);
 router.put("/update-user-password", isAuthenticated, updatePassword);
 router.post("/forgot-password", forgotPassword);
+router.get(
+  "/reset-password-link-validation/:userId/:token",
+  resetPasswordLinkValiditi
+);
 router.post("/reset-password", resetPassword);
 router.put("/update-user-avatar", isAuthenticated, updateAvatar);
 router.patch(

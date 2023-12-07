@@ -382,14 +382,16 @@ export const forgotPassword = CatchAsyncError(
 
       const user = await userModel.findOne({ email }).select("+password");
 
+      if (!user) {
+        return next(
+          new ErrorHandler("You dont have account with this email", 404)
+        );
+      }
+
       if (user?.password === undefined) {
         return next(
           new ErrorHandler("you are not to able update password", 400)
         );
-      }
-
-      if (!user) {
-        return next(new ErrorHandler("user not found", 404));
       }
 
       await forgotPasswordService(user._id, email);
@@ -452,14 +454,16 @@ export const resetPassword = CatchAsyncError(
 
       const user = await userModel.findById(userId).select("+password");
 
+      if (!user) {
+        return next(
+          new ErrorHandler("You dont have account with this email", 404)
+        );
+      }
+
       if (user?.password === undefined) {
         return next(
           new ErrorHandler("you are not to able update password", 400)
         );
-      }
-
-      if (!user) {
-        return next(new ErrorHandler("user not exist", 404));
       }
 
       try {

@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { sidebar } from "@/redux/features/commonSlice";
 import {
   ChevronLeftCircleIcon,
   ChevronRightCircleIcon,
@@ -9,20 +10,21 @@ import {
   User,
   Video,
 } from "lucide-react";
-import { useState } from "react";
 import { Menu, MenuItem, Sidebar, SubMenu } from "react-pro-sidebar";
+import { useDispatch, useSelector } from "react-redux";
 
 const AdminSidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const dispatch = useDispatch();
+  const { toggle, collapsed } = useSelector((state: any) => state.common);
 
   const handleCollapsed = () => {
-    setCollapsed(!collapsed);
+    dispatch(sidebar({ collapsed: !collapsed }));
   };
 
   return (
     <div className="fixed text-black">
       <Sidebar
-        toggled={false}
+        toggled={toggle}
         className="h-screen"
         collapsed={collapsed}
         backgroundColor="#61A3BA"

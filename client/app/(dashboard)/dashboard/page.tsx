@@ -1,15 +1,16 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
 import DashboardProtected from "@/lib/DashboardProtected";
-import { Metadata } from "next";
+import { cn } from "@/lib/utils";
+import { sidebar } from "@/redux/features/commonSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-export const metadata: Metadata = {
-  title: "Dashboard | Skill Sync",
-  description: "Learn and Earn with skill sync",
-  keywords: "MERN, Programing, web development",
-};
-
-const page = () => {
+const Page = () => {
+  const { toggle, collapsed } = useSelector((state: any) => state.common);
+  const dispatch = useDispatch();
   return (
-    <div className="">
+    <div className={cn(collapsed ? "ml-20" : "ml-64", "transition-all")}>
       <DashboardProtected>
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Animi repellat
         ab dolores. Blanditiis quaerat a unde quos totam repudiandae minus
@@ -23,9 +24,12 @@ const page = () => {
         deserunt natus, dolorum pariatur atque harum, sed repellendus enim amet
         vero! Veritatis quae libero ex, esse molestiae quos vero. Blanditiis
         fugiat dignissimos ea!
+        <Button onClick={() => dispatch(sidebar({ toggle: !toggle }))}>
+          Toggled
+        </Button>
       </DashboardProtected>
     </div>
   );
 };
 
-export default page;
+export default Page;

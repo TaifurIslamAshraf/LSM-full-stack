@@ -24,7 +24,7 @@ import {
 import sendMail from "../helpers/sendMail";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import userModel from "../models/user.model";
-import { getUserbyId } from "../services/user.service";
+import { forgotPasswordService, getUserbyId } from "../services/user.service";
 import ErrorHandler from "../utils/errorHandler";
 
 export const registerUser = CatchAsyncError(
@@ -367,6 +367,84 @@ export const updatePassword = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(`update password -- ${error.message}`, 400));
+    }
+  }
+);
+//forgot password
+export const forgotPassword = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return next(new ErrorHandler("All field are required", 400));
+      }
+
+      const user = await userModel.findOne({ email }).select("+password");
+
+      if (user?.password === undefined) {
+        return next(
+          new ErrorHandler("you are not to able update password", 400)
+        );
+      }
+
+      if (!user) {
+        return next(new ErrorHandler("user not found", 404));
+      }
+
+      await forgotPasswordService(user._id, email);
+
+      res.status(201).json({
+        success: true,
+        message: "Check you mail",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`fotgot password -- ${error.message}`, 400));
+    }
+  }
+);
+//reset password
+export const resetPassword = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { newPassword, token, userId } = req.body;
+
+      if (!newPassword || !token || !userId) {
+        return next(new ErrorHandler("All field are required", 400));
+      }
+
+      const user = await userModel.findById(userId).select("+password");
+
+      if (user?.password === undefined) {
+        return next(
+          new ErrorHandler("you are not to able update password", 400)
+        );
+      }
+
+      if (!user) {
+        return next(new ErrorHandler("user not exist", 404));
+      }
+
+      try {
+        const decoded: any = jwt.verify(token, config.jwtSecret);
+        if (!decoded) {
+          return next(new ErrorHandler("Invalid Reset password link", 400));
+        }
+      } catch (error) {
+        return next(new ErrorHandler("Invalid Reset password link", 400));
+      }
+
+      user.password = newPassword;
+
+      await user.save();
+      await redis.set(userId, JSON.stringify(user));
+
+      res.status(201).json({
+        success: true,
+        message: "Password reset successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`${error.message}`, 400));
     }
   }
 );

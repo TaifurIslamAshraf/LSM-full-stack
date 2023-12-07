@@ -23,6 +23,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -92,7 +93,11 @@ const Login = () => {
                     <FormItem>
                       <FormLabel className="text-primary">Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Your Email" {...field} />
+                        <Input
+                          disabled={isLoading}
+                          placeholder="Enter Your Email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -106,7 +111,11 @@ const Login = () => {
                     <FormItem>
                       <FormLabel className="text-primary">Password</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Your Password" {...field} />
+                        <Input
+                          disabled={isLoading}
+                          placeholder="Enter Your Password"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -121,6 +130,15 @@ const Login = () => {
                 )}
               </form>
             </Form>
+            <div className="mt-5">
+              forgot your password?{" "}
+              <Link
+                className="text-blue-400 hover:underline"
+                href="/forgotPassword"
+              >
+                reset
+              </Link>
+            </div>
           </CardContent>
           <CardFooter className="">
             <SocialAuth />

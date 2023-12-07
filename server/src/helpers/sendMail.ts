@@ -22,7 +22,6 @@ const sendMail = async (option: IEmailOption): Promise<void> => {
 
   //render the mail templete with ejs
   const html: string = await ejs.renderFile(templetePath, data);
-
   const mailOptions = {
     from: config.smtpMail,
     to: email,

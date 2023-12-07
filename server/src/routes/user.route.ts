@@ -2,11 +2,13 @@ import express from "express";
 import {
   activateUser,
   deleteUser,
+  forgotPassword,
   getAllUsers,
   getUserInfo,
   loginUser,
   logoutUser,
   registerUser,
+  resetPassword,
   socialAuth,
   updateAccessToken,
   updateAvatar,
@@ -28,6 +30,8 @@ router.get("/users", isAuthenticated, authorizedUser("admin"), getAllUsers);
 router.post("/social-auth", socialAuth);
 router.put("/update-user-info", isAuthenticated, updateUserInfo);
 router.put("/update-user-password", isAuthenticated, updatePassword);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 router.put("/update-user-avatar", isAuthenticated, updateAvatar);
 router.patch(
   "/update-user-role",

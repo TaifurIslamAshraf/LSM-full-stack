@@ -17,7 +17,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-const ProfileMenu = () => {
+const ProfileMenu = ({ isDashboard }: { isDashboard: boolean }) => {
   const [isLogout, setIsLogout] = useState(false);
 
   const { user } = useSelector((state: any) => state.auth);
@@ -43,7 +43,7 @@ const ProfileMenu = () => {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {user.name && user.role === "admin" && (
+        {user.name && user.role === "admin" && isDashboard && (
           <Link href="/dashboard">
             <DropdownMenuItem className="block cursor-pointer">
               Dashboard

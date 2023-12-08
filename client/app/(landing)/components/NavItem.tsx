@@ -52,7 +52,7 @@ const NavItem = () => {
           );
         })}
         {user.name ? (
-          <ProfileMenu />
+          <ProfileMenu isDashboard={true} />
         ) : (
           <Link href={"/login"} className="">
             <UserCircle size={30} />
@@ -84,7 +84,7 @@ const NavItem = () => {
           {user.name ? (
             <div className="w-full flex items-center justify-between bg-muted border border-primary/20 py-3 rounded-md px-3 cursor-default">
               <p>Logout from here</p>
-              <ProfileMenu />
+              <ProfileMenu isDashboard={true} />
             </div>
           ) : (
             <Link

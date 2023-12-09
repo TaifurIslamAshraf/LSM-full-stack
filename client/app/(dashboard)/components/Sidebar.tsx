@@ -21,6 +21,7 @@ import {
   Video,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 const deshboardMenu = [
@@ -28,7 +29,6 @@ const deshboardMenu = [
     title: "Dashboard",
     path: "/dashboard",
     spacing: true,
-
     icon: <LayoutDashboard size={17} />,
   },
   {
@@ -101,6 +101,8 @@ const deshboardMenu = [
 const Navbar = () => {
   const { toggle, collapsed } = useSelector((state: any) => state.common);
   const dispatch = useDispatch();
+  const path = usePathname();
+  console.log(path);
 
   const handleCollapsed = () => {
     dispatch(sidebar({ collapsed: !collapsed, toggle: false }));
@@ -147,7 +149,10 @@ const Navbar = () => {
           return (
             <nav
               key={index}
-              className={cn("hover:bg-blue-400 px-1 rounded-sm transition")}
+              className={cn(
+                "hover:bg-blue-400 px-1 rounded-sm transition",
+                path === menu.path && "bg-blue-400"
+              )}
             >
               <Link
                 href={menu.path}
@@ -155,13 +160,13 @@ const Navbar = () => {
                 flex
                 items-center
                 gap-x-4
+                my-1
                 px-2
-                my-4
-                
+                py-2
                 rounded
-                ${menu.spacing && "mb-8"}
-                
+                ${menu.spacing && "mb-5"}
               `}
+                onClick={handleCollapsed}
               >
                 <div className="">{menu.icon}</div>
                 <div

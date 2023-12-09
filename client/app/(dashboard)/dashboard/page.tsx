@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const Page = () => {
   const { toggle, collapsed } = useSelector((state: any) => state.common);
   return (
-    <div className={cn("mt-[60px] h-[200vh] transition-all ml-20")}>
+    <div className={cn("mt-[60px] h-[200vh] transition-all pl-20")}>
       Lorem ipsum dolor sit, amet consectetur adipisicing elit. Animi repellat
       ab dolores. Blanditiis quaerat a unde quos totam repudiandae minus aperiam
       debitis, laborum exercitationem modi numquam laboriosam maxime possimus

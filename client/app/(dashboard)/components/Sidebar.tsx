@@ -102,10 +102,14 @@ const Navbar = () => {
   const { toggle, collapsed } = useSelector((state: any) => state.common);
   const dispatch = useDispatch();
   const path = usePathname();
-  console.log(path);
 
-  const handleCollapsed = () => {
-    dispatch(sidebar({ collapsed: !collapsed, toggle: false }));
+  const handleCollapsed = (isColl: boolean) => {
+    if (collapsed && isColl) {
+      dispatch(sidebar({ collapsed: true, toggle: false }));
+    }
+    if (!isColl) {
+      dispatch(sidebar({ collapsed: !collapsed, toggle: false }));
+    }
   };
 
   return (
@@ -128,7 +132,7 @@ const Navbar = () => {
         </h1>
         <div
           className="cursor-pointer hover:bg-blue-400 rounded-md"
-          onClick={handleCollapsed}
+          onClick={() => handleCollapsed(false)}
         >
           {collapsed ? <ChevronLeft size={30} /> : <ChevronRight size={30} />}
         </div>
@@ -166,7 +170,7 @@ const Navbar = () => {
                 rounded
                 ${menu.spacing && "mb-5"}
               `}
-                onClick={handleCollapsed}
+                onClick={() => handleCollapsed(true)}
               >
                 <div className="">{menu.icon}</div>
                 <div

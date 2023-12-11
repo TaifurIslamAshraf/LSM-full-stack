@@ -1,13 +1,20 @@
 "use client";
 
+import Loading from "@/app/loading";
 import { IChildren } from "@/types/global";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { userAuth } from "./userAuth";
 
 const Protected = ({ children }: IChildren) => {
   const isAuthenticated = userAuth();
+  const router = useRouter();
 
-  return isAuthenticated ? children : redirect("/login");
+  if (!isAuthenticated) {
+    <Suspense fallback={<Loading />} />;
+  }
+
+  return isAuthenticated ? children : router.replace("/login");
 };
 
 export default Protected;

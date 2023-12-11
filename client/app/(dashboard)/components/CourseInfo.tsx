@@ -10,27 +10,26 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
 import { useState } from "react";
 
 interface Props {
-  formStep: number;
-  setFormStep: (formStep: number) => void;
+  handleNextClick: () => void;
+  handlePrevClick: () => void;
   form: any;
 }
 
-const CourseInfo = ({ form, formStep, setFormStep }: Props) => {
-  const [thumbnailPreview, setThumbnailPreview] = useState<
-    string | ArrayBuffer | null
-  >(null);
+const CourseInfo = ({ handleNextClick, handlePrevClick, form }: Props) => {
+  const [thumbnailPreview, setThumbnailPreview] = useState<any>("");
 
   const handleChangeThumbnail = (e: any) => {
     const file = e.target.files[0];
     if (file) {
       const render = new FileReader();
       render.onload = (e: any) => {
-        if (render.readyState === 2) {
-          form.setValue("thumbnail", render.result);
-          setThumbnailPreview(render.result);
+        if (render.readyState === 2 && render.result) {
+          form.setValue("thumbnail", (render.result as string) ?? "");
+          setThumbnailPreview((render.result as string) ?? "");
         }
       };
       render.readAsDataURL(file);
@@ -182,13 +181,21 @@ const CourseInfo = ({ form, formStep, setFormStep }: Props) => {
           </FormItem>
         )}
       />
-      <img src={thumbnailPreview} />
-      <Button
-        onClick={() => setFormStep(formStep + 1)}
-        disabled={form.formState.isDirty}
-      >
-        Next
-      </Button>
+      {thumbnailPreview ? (
+        <Image
+          src={thumbnailPreview}
+          height={200}
+          width={500}
+          alt="thumbnail"
+        />
+      ) : (
+        ""
+      )}
+      <div className="flex items-center justify-end gap-4">
+        <Button onClick={handleNextClick} className="w-[60px]">
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

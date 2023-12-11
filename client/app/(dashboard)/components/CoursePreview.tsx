@@ -6,7 +6,7 @@ interface Props {
   form: any;
 }
 
-const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
+const CoursePreview = ({ handlePrevClick, handleNextClick, form }: Props) => {
   return (
     <div>
       <div className="flex items-center justify-end gap-4">
@@ -21,4 +21,4 @@ const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
   );
 };
 
-export default CourseContent;
+export default CoursePreview;

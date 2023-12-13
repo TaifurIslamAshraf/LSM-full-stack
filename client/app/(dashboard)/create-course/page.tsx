@@ -2,7 +2,6 @@
 
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,21 +37,23 @@ const courseFormSchema = z.object({
       title: z.string(),
     })
   ),
-  // courseData: z.array(
-  //   z.object({
-  //     title: z.string().min(1, "Course data title is required"),
-  //     description: z.string().min(1, "Course data description is required"),
-  //     videoUrl: z.string().url("Invalid URL for video"),
-  //     videoSection: z.string().min(1, "Video section is required"),
-  //     links: z.array(
-  //       z.object({
-  //         title: z.string().min(1, "Link title is required"),
-  //         url: z.string().url("Invalid URL for link"),
-  //       })
-  //     ),
-  //     suggestion: z.string().min(1, "Suggestion is required"),
-  //   })
-  // ),
+  courseData: z.array(
+    z.object({
+      videoTitle: z.string().min(1, "Course data title is required"),
+      VideoDescription: z
+        .string()
+        .min(1, "Course data description is required"),
+      videoUrl: z.string().url("Invalid URL for video"),
+      videoSection: z.string().min(1, "Video section is required"),
+      links: z.array(
+        z.object({
+          title: z.string().min(1, "Link title is required"),
+          url: z.string().url("Invalid URL for link"),
+        })
+      ),
+      suggestion: z.string().min(1, "Suggestion is required"),
+    })
+  ),
 });
 
 const CreateCourse = () => {
@@ -70,24 +71,24 @@ const CreateCourse = () => {
       thumbnail: "",
       benefits: [],
       prerequisites: [],
-      // courseData: [
-      //   {
-      //     title: "",
-      //     description: "",
-      //     videoUrl: "",
-      //     videoSection: "",
-      //     links: [
-      //       {
-      //         title: "",
-      //         url: "",
-      //       },
-      //     ],
-      //     suggestion: "",
-      //   },
-      // ],
+      courseData: [
+        // {
+        //   videoTitle: "",
+        //   VideoDescription: "",
+        //   videoUrl: "",
+        //   videoSection: "Untitled Section",
+        //   links: [
+        //     {
+        //       title: "",
+        //       url: "",
+        //     },
+        //   ],
+        //   suggestion: "",
+        // },
+      ],
     },
   });
-  const [formStep, setFormStep] = useState(0);
+  const [formStep, setFormStep] = useState(2);
 
   const handleCreateCourse = (data: z.infer<typeof courseFormSchema>) => {
     console.log(data);
@@ -104,7 +105,9 @@ const CreateCourse = () => {
 
     // if (valid) {
     // }
-    setFormStep(formStep + 1);
+    if (formStep < 3) {
+      setFormStep(formStep + 1);
+    }
   };
 
   return (
@@ -142,7 +145,7 @@ const CreateCourse = () => {
                   form={CourseForm}
                 />
               )}
-              <Button type="submit">Submit</Button>
+              {/* <Button type="submit">Submit</Button> */}
             </form>
           </Form>
         </CardContent>

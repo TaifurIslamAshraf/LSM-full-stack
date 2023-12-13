@@ -68,7 +68,7 @@ const CourseFormSteps = ({ formStep, setFormStep }: Props) => {
               formStep < 3 ? "bg-gray-500" : "bg-blue-500"
             )}
           >
-            {formStep > 3 ? <Check /> : <h1>4</h1>}
+            {formStep >= 3 ? <Check /> : <h1>4</h1>}
           </div>
         </div>
         <h1 className="absolute left-[-50%]">Preview</h1>

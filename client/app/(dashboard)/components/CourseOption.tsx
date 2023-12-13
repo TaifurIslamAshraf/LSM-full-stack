@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface Props {
   handleNextClick: () => void;
@@ -19,6 +20,8 @@ interface Props {
 const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
   const [benefitTitle, setBenefitTitle] = useState("");
   const [prerequisitesTitle, setPrerequisitesTitle] = useState("");
+  const currentBenefits = form.getValues("benefits");
+  const currentPrerequisitesValue = form.getValues("prerequisites");
 
   const handleChangeBenefits = (e: any) => {
     e.preventDefault();
@@ -32,8 +35,6 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
 
   const handleAddBenefits = async () => {
     if (benefitTitle.trim() !== "") {
-      const currentBenefits = form.getValues("benefits");
-
       const updatedBenefits = [...currentBenefits, { title: benefitTitle }];
       form.setValue("benefits", updatedBenefits);
       setBenefitTitle("");
@@ -42,7 +43,6 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
 
   const handleAddPrerequisites = () => {
     if (prerequisitesTitle.trim() !== "") {
-      const currentPrerequisitesValue = form.getValues("prerequisites");
       const updatedPrerequisites = [
         ...currentPrerequisitesValue,
         { title: prerequisitesTitle },
@@ -51,6 +51,17 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
       form.setValue("prerequisites", updatedPrerequisites);
 
       setPrerequisitesTitle("");
+    }
+  };
+
+  const NextValidation = () => {
+    if (
+      currentBenefits.length === 0 ||
+      currentPrerequisitesValue.length === 0
+    ) {
+      toast.error("You have at least one Benefits and Prerequisites");
+    } else {
+      handleNextClick();
     }
   };
 
@@ -147,7 +158,7 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
         <Button onClick={handlePrevClick} className="w-[80px]">
           Previous
         </Button>
-        <Button onClick={handleNextClick} className="w-[60px]">
+        <Button onClick={NextValidation} className="w-[60px]">
           Next
         </Button>
       </div>

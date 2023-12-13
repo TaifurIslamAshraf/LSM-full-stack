@@ -49,11 +49,11 @@ const commentSchema = new Schema<IComment>({
 });
 
 const courseDataSchema = new Schema<ICourseData>({
-  title: {
+  videoTitle: {
     type: String,
     required: true,
   },
-  description: {
+  videoDescription: {
     type: String,
     required: true,
   },

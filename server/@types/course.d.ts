@@ -19,8 +19,8 @@ export interface ILink extends Document {
 }
 
 export interface ICourseData extends Document {
-  title: string;
-  description: string;
+  videoTitle: string;
+  videoDescription: string;
   videoUrl: string;
   videoSection: string;
   videoLength: number;

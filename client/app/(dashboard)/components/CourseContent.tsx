@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -10,7 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Pencil, PlusCircle, Video } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
+import CourseContentPreview from "./CourseContentPreview";
 
 interface Props {
   handleNextClick: () => void;
@@ -34,11 +38,11 @@ const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
     videoSection: "Untitled Section",
     links: [],
   });
-
   const [linksObj, setLinksObj] = useState({
     title: "",
     url: "",
   });
+
   const [videoSectionEdit, setVideoSectionEdit] = useState(true);
   const currentCourseData = form.getValues("courseData");
 
@@ -126,6 +130,7 @@ const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
                   name="videoTitle"
                   onChange={handleChangeCourseData}
                   placeholder="Enter Video Title"
+                  value={courseData.videoTitle}
                 />
               </FormControl>
               <FormMessage />
@@ -145,6 +150,7 @@ const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
                   onChange={handleChangeCourseData}
                   rows={10}
                   placeholder="Write Your Video Description"
+                  value={courseData.videoDescription}
                 />
               </FormControl>
               <FormMessage />
@@ -163,6 +169,7 @@ const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
                   name="videoUrl"
                   onChange={handleChangeCourseData}
                   placeholder="Enter Video Url"
+                  value={courseData.videoUrl}
                 />
               </FormControl>
               <FormMessage />
@@ -208,6 +215,23 @@ const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
             )}
           />
 
+          <div className="">
+            {courseData.links.length > 0 &&
+              courseData.links.map((item, i) => (
+                <ul key={i} className="list-disc list-inside">
+                  <li className="font-semibold mb-2">
+                    {item.title}
+
+                    <p className="ml-2 hover:underline text-blue-500">
+                      <Link href={item.url} target="_blank">
+                        {item.url}
+                      </Link>
+                    </p>
+                  </li>
+                </ul>
+              ))}
+          </div>
+
           <div className="flex items-center gap-1">
             <PlusCircle onClick={handleAddLinks} className="cursor-pointer" />
             <p className="text-sm">Add new Link</p>
@@ -221,6 +245,8 @@ const CourseContent = ({ handlePrevClick, handleNextClick, form }: Props) => {
           </div>
         </div>
       </div>
+
+      <CourseContentPreview form={form} />
 
       <div className="flex items-center justify-end gap-4">
         <Button onClick={handlePrevClick} className="w-[80px]">

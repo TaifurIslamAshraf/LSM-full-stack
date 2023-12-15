@@ -7,7 +7,7 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import CourseContent from "../components/CourseContent";
+import CourseData from "../components/CourseData";
 import CourseFormSteps from "../components/CourseFormSteps";
 import CourseInfo from "../components/CourseInfo";
 import CourseOption from "../components/CourseOption";
@@ -132,7 +132,7 @@ const CreateCourse = () => {
                 />
               )}
               {formStep === 2 && (
-                <CourseContent
+                <CourseData
                   handleNextClick={handleNextClick}
                   handlePrevClick={handlePrevClick}
                   form={CourseForm}

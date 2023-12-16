@@ -54,7 +54,10 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
   const [activeSection, setActiveSection] = useState(1);
 
   // all function here
-  const handleDelete = (index: number) => {
+  const handleDeleteContent = (index: number) => {
+    if (activeSection > 1) {
+      setActiveSection((prev) => prev - 1);
+    }
     const updatedData = [...courseContent];
     updatedData.splice(index, 1);
     setCourseContent(updatedData);
@@ -80,16 +83,67 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
   };
 
   const addNewContentHandler = (item: ICourseContent) => {
-    if (
-      item.videoTitle.trim() === "" ||
-      item.videoDescription.trim() === "" ||
-      item.videoUrl.trim() === "" ||
-      item.links[0].title.trim() === "" ||
-      item.links[0].url.trim() === ""
-    ) {
+    if (validation({ item })) {
       toast.error("All field are required");
     } else {
       let newVideoSection = "";
+
+      if (courseContent.length > 0) {
+        const lastVideoSection =
+          courseContent[courseContent.length - 1].videoSection;
+
+        //if last video section is available then use that else use user input
+        if (lastVideoSection) {
+          newVideoSection = lastVideoSection;
+        }
+      }
+
+      const newContent: ICourseContent = {
+        videoTitle: "",
+        videoDescription: "",
+        videoSection: newVideoSection,
+        videoUrl: "",
+        links: [{ title: "", url: "" }],
+      };
+
+      setCourseContent([...courseContent, newContent]);
+    }
+  };
+
+  const addNewVideoSection = () => {
+    if (validation({})) {
+      toast.error("All field are required");
+    } else {
+      setActiveSection((prev) => prev + 1);
+      const newContentSection: ICourseContent = {
+        videoTitle: "",
+        videoDescription: "",
+        videoSection: `Untitled Section ${activeSection}`,
+        videoUrl: "",
+        links: [{ title: "", url: "" }],
+      };
+      setCourseContent([...courseContent, newContentSection]);
+    }
+  };
+
+  const validation = ({ item }: { item?: ICourseContent }): boolean => {
+    if (item) {
+      const { videoTitle, videoDescription, videoUrl, links } = item;
+      return (
+        videoTitle.trim() === "" ||
+        videoDescription.trim() === "" ||
+        videoUrl.trim() === "" ||
+        links[0].title.trim() === "" ||
+        links[0].url.trim() === ""
+      );
+    } else {
+      const lastContent = courseContent[courseContent.length - 1];
+      return (
+        lastContent.videoTitle.trim() === "" ||
+        lastContent.videoDescription.trim() === "" ||
+        lastContent.links[0].title.trim() === "" ||
+        lastContent.links[0].url.trim() === ""
+      );
     }
   };
 
@@ -105,45 +159,44 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
             <div
               className={cn(
                 "w-full p-4 flex justify-between",
-                showSectionInput ? "mt-10" : "mb-0"
+                showSectionInput ? "mt-10" : "mt-0"
               )}
             >
-              <div className="flex items-center">
-                <input
-                  className={cn(
-                    "text-lg border-none outline-none bg-transparent",
-                    item.videoSection === "Untitled Section"
-                      ? "w-[170px]"
-                      : "w-min"
-                  )}
-                  value={courseContent[index].videoSection}
-                  onChange={(e: any) => {
-                    const updatedCourseContent = [...courseContent];
-                    updatedCourseContent[index].videoSection = e.target.value;
-                    setCourseContent(updatedCourseContent);
-                  }}
-                />
-                <Pencil />
-              </div>
+              {showSectionInput && (
+                <div className="flex items-center">
+                  <input
+                    className={cn(
+                      "text-lg border-none outline-none bg-transparent",
+                      item.videoSection === "Untitled Section"
+                        ? "w-[170px]"
+                        : "w-min"
+                    )}
+                    value={courseContent[index].videoSection}
+                    onChange={(e: any) => {
+                      const updatedCourseContent = [...courseContent];
+                      updatedCourseContent[index].videoSection = e.target.value;
+                      setCourseContent(updatedCourseContent);
+                    }}
+                  />
+                  <Pencil />
+                </div>
+              )}
+            </div>
+            {/* all button actions */}
 
-              {/* all button actions */}
+            <div className="flex items-center gap-4 justify-end">
+              <Trash
+                className={cn(index > 0 ? "cursor-pointer" : "hidden")}
+                onClick={() => handleDeleteContent(index)}
+              />
 
-              <div className="flex items-center gap-4">
-                <Trash
-                  className={cn(
-                    index > 0 ? "cursor-pointer" : "cursor-not-allowed"
-                  )}
-                  onClick={() => handleDelete(index)}
-                />
-
-                <ChevronDown
-                  className={cn(
-                    isCollapsed[index] ? "rotate-180" : "rotate-0",
-                    "cursor-pointer"
-                  )}
-                  onClick={() => handleCollapseToggle(index)}
-                />
-              </div>
+              <ChevronDown
+                className={cn(
+                  isCollapsed[index] ? "rotate-180" : "rotate-0",
+                  "cursor-pointer"
+                )}
+                onClick={() => handleCollapseToggle(index)}
+              />
             </div>
 
             <div className="">
@@ -318,7 +371,7 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
 
             {index === courseContent.length - 1 && (
               <Button
-                className="gap-2"
+                className="gap-2 mt-6"
                 variant={"outline"}
                 onClick={() => addNewContentHandler(item)}
               >
@@ -329,6 +382,15 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
           </>
         );
       })}
+
+      {/* add new video section */}
+      <Button
+        className="gap-2 mt-10 text-center w-full"
+        onClick={addNewVideoSection}
+      >
+        <PlusCircle />
+        <span>Add New Section</span>
+      </Button>
     </div>
   );
 };

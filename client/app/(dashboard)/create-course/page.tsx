@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +17,10 @@ import CoursePreview from "../components/CoursePreview";
 interface Props {
   formStep: number;
   setFormStep: (formStep: number) => void;
+}
+
+interface INext {
+  validation?: () => boolean;
 }
 
 const courseFormSchema = z.object({
@@ -88,7 +93,7 @@ const CreateCourse = () => {
       ],
     },
   });
-  const [formStep, setFormStep] = useState(2);
+  const [formStep, setFormStep] = useState(0);
 
   const handleCreateCourse = (data: z.infer<typeof courseFormSchema>) => {
     console.log(data);
@@ -103,12 +108,16 @@ const CreateCourse = () => {
   const handleNextClick = async () => {
     const valid = await CourseForm.trigger();
 
-    // if (valid) {
-    // }
-    if (formStep < 3) {
+    if (formStep === 0) {
+      if (valid) {
+        setFormStep(formStep + 1);
+      }
+    } else if (formStep < 3) {
       setFormStep(formStep + 1);
     }
   };
+
+  console.log(CourseForm.watch());
 
   return (
     <div className="mt-[60px] pl-20">
@@ -145,7 +154,7 @@ const CreateCourse = () => {
                   form={CourseForm}
                 />
               )}
-              {/* <Button type="submit">Submit</Button> */}
+              <Button type="submit">Submit</Button>
             </form>
           </Form>
         </CardContent>

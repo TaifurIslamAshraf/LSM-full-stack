@@ -147,6 +147,16 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
     }
   };
 
+  //when click next its tregar validation function
+  const NextValidation = () => {
+    if (validation({})) {
+      toast.error("All field are required");
+    } else {
+      form.setValue("courseData", courseContent);
+      handleNextClick();
+    }
+  };
+
   return (
     <div>
       {courseContent?.map((item: ICourseContent, index: number) => {
@@ -157,6 +167,7 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
         return (
           <>
             <div
+              key={index + 22}
               className={cn(
                 "w-full p-4 flex justify-between",
                 showSectionInput ? "mt-10" : "mt-0"
@@ -391,6 +402,15 @@ const CourseData = ({ handleNextClick, handlePrevClick, form }: Props) => {
         <PlusCircle />
         <span>Add New Section</span>
       </Button>
+
+      <div className="flex items-center justify-end gap-4 mt-14">
+        <Button onClick={handlePrevClick} className="w-[80px]">
+          Previous
+        </Button>
+        <Button onClick={NextValidation} className="w-[60px]">
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

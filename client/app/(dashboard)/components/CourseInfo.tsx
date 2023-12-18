@@ -36,6 +36,23 @@ const CourseInfo = ({ handleNextClick, handlePrevClick, form }: Props) => {
     }
   };
 
+  const nextValidation = async () => {
+    const stepValid = await form.trigger([
+      "name",
+      "description",
+      "price",
+      "estimatedPrice",
+      "tags",
+      "level",
+      "demoUrl",
+      "thumbnail",
+    ]);
+
+    if (stepValid) {
+      handleNextClick();
+    }
+  };
+
   return (
     <div className="space-y-6">
       <FormField
@@ -192,7 +209,7 @@ const CourseInfo = ({ handleNextClick, handlePrevClick, form }: Props) => {
         ""
       )}
       <div className="flex items-center justify-end gap-4">
-        <Button onClick={handleNextClick} className="w-[60px]">
+        <Button onClick={nextValidation} className="w-[60px]">
           Next
         </Button>
       </div>

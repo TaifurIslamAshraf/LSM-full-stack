@@ -8,11 +8,11 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import CourseData from "../components/CourseData";
 import CourseFormSteps from "../components/CourseFormSteps";
 import CourseInfo from "../components/CourseInfo";
 import CourseOption from "../components/CourseOption";
 import CoursePreview from "../components/CoursePreview";
+import FormStep2 from "../components/FormStep2";
 
 interface Props {
   formStep: number;
@@ -32,22 +32,24 @@ const courseFormSchema = z.object({
   level: z.string().min(1, "Level is required"),
   demoUrl: z.string().url("Invalid URL for demo"),
   thumbnail: z.string().min(1, "Thumbnail is Required"),
-  benefits: z.array(
-    z.object({
-      title: z.string().min(1, "Benefit is required"),
-    })
-  ),
-  prerequisites: z.array(
-    z.object({
-      title: z.string(),
-    })
-  ),
+  benefits: z
+    .array(
+      z.object({
+        title: z.string().min(1, "Benefit is required"),
+      })
+    )
+    .nonempty("Benefits is required"),
+  prerequisites: z
+    .array(
+      z.object({
+        title: z.string().min(1, "Prerequisites is required"),
+      })
+    )
+    .nonempty("Prerequisites is required"),
   courseData: z.array(
     z.object({
-      videoTitle: z.string().min(1, "Course data title is required"),
-      VideoDescription: z
-        .string()
-        .min(1, "Course data description is required"),
+      videoTitle: z.string().min(1, "Video title is required"),
+      videoDescription: z.string().min(1, "Video description is required"),
       videoUrl: z.string().url("Invalid URL for video"),
       videoSection: z.string().min(1, "Video section is required"),
       links: z.array(
@@ -56,7 +58,6 @@ const courseFormSchema = z.object({
           url: z.string().url("Invalid URL for link"),
         })
       ),
-      suggestion: z.string().min(1, "Suggestion is required"),
     })
   ),
 });
@@ -74,26 +75,25 @@ const CreateCourse = () => {
       level: "",
       demoUrl: "",
       thumbnail: "",
-      benefits: [],
-      prerequisites: [],
+      benefits: [{ title: "" }],
+      prerequisites: [{ title: "" }],
       courseData: [
-        // {
-        //   videoTitle: "",
-        //   VideoDescription: "",
-        //   videoUrl: "",
-        //   videoSection: "Untitled Section",
-        //   links: [
-        //     {
-        //       title: "",
-        //       url: "",
-        //     },
-        //   ],
-        //   suggestion: "",
-        // },
+        {
+          videoTitle: "",
+          videoDescription: "",
+          videoUrl: "",
+          videoSection: "Untitled Section",
+          links: [
+            {
+              title: "",
+              url: "",
+            },
+          ],
+        },
       ],
     },
   });
-  const [formStep, setFormStep] = useState(0);
+  const [formStep, setFormStep] = useState(1);
 
   const handleCreateCourse = (data: z.infer<typeof courseFormSchema>) => {
     console.log(data);
@@ -105,14 +105,8 @@ const CreateCourse = () => {
     }
   };
 
-  const handleNextClick = async () => {
-    const valid = await CourseForm.trigger();
-
-    if (formStep === 0) {
-      if (valid) {
-        setFormStep(formStep + 1);
-      }
-    } else if (formStep < 3) {
+  const handleNextClick = () => {
+    if (formStep > 0 && formStep < 3) {
       setFormStep(formStep + 1);
     }
   };
@@ -141,7 +135,7 @@ const CreateCourse = () => {
                 />
               )}
               {formStep === 2 && (
-                <CourseData
+                <FormStep2
                   handleNextClick={handleNextClick}
                   handlePrevClick={handlePrevClick}
                   form={CourseForm}

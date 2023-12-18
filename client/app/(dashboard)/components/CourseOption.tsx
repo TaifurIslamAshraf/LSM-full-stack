@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { useFieldArray } from "react-hook-form";
 
 interface Props {
   handleNextClick: () => void;
@@ -20,140 +19,91 @@ interface Props {
 }
 
 const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
-  const [benefitTitle, setBenefitTitle] = useState("");
-  const [prerequisitesTitle, setPrerequisitesTitle] = useState("");
-  const currentBenefits = form.getValues("benefits");
-  const currentPrerequisitesValue = form.getValues("prerequisites");
-
-  const handleChangeBenefits = (e: any) => {
-    e.preventDefault();
-    setBenefitTitle(e.target.value);
-  };
-
-  const handleChangePrerequisites = (e: any) => {
-    e.preventDefault();
-    setPrerequisitesTitle(e.target.value);
-  };
+  const { fields: benefitsField, append: benefitsAppend } = useFieldArray({
+    name: "benefits",
+    control: form.control,
+  });
+  const { fields: prerequisitesField, append: prerequisitesAppend } =
+    useFieldArray({
+      name: "prerequisites",
+      control: form.control,
+    });
 
   const handleAddBenefits = async () => {
-    if (benefitTitle.trim() !== "") {
-      const updatedBenefits = [...currentBenefits, { title: benefitTitle }];
-      form.setValue("benefits", updatedBenefits);
-      setBenefitTitle("");
+    const isValidbenefits = await form.trigger("benefits");
+    console.log(isValidbenefits, "benefits");
+    if (isValidbenefits) {
+      benefitsAppend({ title: "" });
     }
   };
 
-  const handleAddPrerequisites = () => {
-    if (prerequisitesTitle.trim() !== "") {
-      const updatedPrerequisites = [
-        ...currentPrerequisitesValue,
-        { title: prerequisitesTitle },
-      ];
-
-      form.setValue("prerequisites", updatedPrerequisites);
-
-      setPrerequisitesTitle("");
+  const handleAddPrerequisites = async () => {
+    const isValidPrerequisites = await form.trigger("prerequisites");
+    console.log(isValidPrerequisites);
+    if (isValidPrerequisites) {
+      prerequisitesAppend({ title: "" });
     }
   };
 
-  const NextValidation = () => {
-    if (
-      currentBenefits.length === 0 ||
-      currentPrerequisitesValue.length === 0
-    ) {
-      toast.error("You have at least one Benefits and Prerequisites");
-    } else {
-      handleNextClick();
-    }
-  };
+  const NextValidation = () => {};
 
   return (
     <div className="space-y-6">
       <div className="">
-        <div className="flex items-end">
-          <div className="grow">
-            <FormField
-              control={form.control}
-              name="benefits"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-primary">
-                    Course Benefits
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      onChange={handleChangeBenefits}
-                      placeholder="Enter Your Course Benefits"
-                      value={benefitTitle}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <FormLabel className="text-primary">Course Benefits</FormLabel>
+        {benefitsField?.map((benefit, index) => (
+          <div key={benefit.id} className="mb-4">
+            <div className="grow">
+              <FormField
+                control={form.control}
+                name={`benefits.${index}.title`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Your Course Benefits"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-          <div
-            className="bg-blue-500 text-white cursor-pointer p-1"
-            onClick={handleAddBenefits}
-          >
-            <Plus size={30} />
-          </div>
-        </div>
-
-        <ol className="list-decimal ml-4 mt-3">
-          {form.watch("benefits") &&
-            form
-              .watch("benefits")
-              .map((benefit: { title: string }, i: number) => (
-                <li className="font-semibold py-1" key={i}>
-                  {benefit.title}
-                </li>
-              ))}
-        </ol>
+        ))}
+        <Button variant={"outline"} onClick={handleAddBenefits}>
+          <Plus size={30} />
+        </Button>
       </div>
 
       <div className="">
-        <div className="flex items-end">
-          <div className="grow">
-            <FormField
-              control={form.control}
-              name="prerequisites"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-primary">
-                    Course Prerequisites
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      onChange={handleChangePrerequisites}
-                      placeholder="Enter Your Course prerequisites"
-                      value={prerequisitesTitle}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <FormLabel className="text-primary">Course Prerequisites</FormLabel>
+        {prerequisitesField.map((prere, index) => (
+          <div key={prere.id} className="mb-4">
+            <div className="">
+              <FormField
+                control={form.control}
+                name={`prerequisites.${index}.title`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter Your Course prerequisites"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
+        ))}
 
-          <div
-            className="bg-blue-500 text-white cursor-pointer p-1"
-            onClick={handleAddPrerequisites}
-          >
-            <Plus size={30} />
-          </div>
-        </div>
-
-        <ol className="list-decimal ml-4 mt-3">
-          {form.watch("prerequisites") &&
-            form
-              .watch("prerequisites")
-              .map((benefit: { title: string }, i: number) => (
-                <li className="font-semibold py-1" key={i}>
-                  {benefit.title}
-                </li>
-              ))}
-        </ol>
+        <Button variant={"outline"} onClick={handleAddPrerequisites}>
+          <Plus size={30} />
+        </Button>
       </div>
 
       <div className="flex items-center justify-end gap-4">

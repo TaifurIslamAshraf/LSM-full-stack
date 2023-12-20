@@ -8,11 +8,11 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import CourseFormSteps from "../components/CourseFormSteps";
-import CourseInfo from "../components/CourseInfo";
-import CourseOption from "../components/CourseOption";
-import CoursePreview from "../components/CoursePreview";
-import FormStep2 from "../components/FormStep2";
+import CourseFormSteps from "../components/createCourseForm/CourseFormSteps";
+import CourseInfo from "../components/createCourseForm/CourseInfo";
+import CoursePreview from "../components/createCourseForm/CoursePreview";
+import FormStep1 from "../components/createCourseForm/FormStep1";
+import FormStep2 from "../components/createCourseForm/FormStep2";
 
 interface Props {
   formStep: number;
@@ -65,7 +65,7 @@ const courseFormSchema = z.object({
 const CreateCourse = () => {
   const CourseForm = useForm<z.infer<typeof courseFormSchema>>({
     resolver: zodResolver(courseFormSchema),
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       name: "",
       description: "",
@@ -93,7 +93,7 @@ const CreateCourse = () => {
       ],
     },
   });
-  const [formStep, setFormStep] = useState(1);
+  const [formStep, setFormStep] = useState(2);
 
   const handleCreateCourse = (data: z.infer<typeof courseFormSchema>) => {
     console.log(data);
@@ -128,7 +128,7 @@ const CreateCourse = () => {
                 />
               )}
               {formStep === 1 && (
-                <CourseOption
+                <FormStep1
                   handleNextClick={handleNextClick}
                   handlePrevClick={handlePrevClick}
                   form={CourseForm}

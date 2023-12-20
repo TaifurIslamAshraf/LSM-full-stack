@@ -11,9 +11,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { PlusCircle, Trash } from "lucide-react";
+import { ChevronDown, PlusCircle, Trash } from "lucide-react";
 import { useState } from "react";
 import { FieldValues, useFieldArray } from "react-hook-form";
+import NestedLinkArray from "./NestedLinkArray";
 
 interface Props {
   handleNextClick: () => void;
@@ -33,7 +34,7 @@ interface ICourseContent {
 }
 
 const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: "courseData",
     control: form.control,
   });
@@ -63,7 +64,7 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
     }
   };
 
-  const handleLinkDelete = (index: number, linkIndex: number) => {};
+  const handleCollapseToggle = (index: number) => {};
 
   // all function here
   //   const handleDeleteContent = (index: number) => {
@@ -151,6 +152,20 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
       {typedFields?.map((item, index: number) => {
         return (
           <>
+            <div key={item.id} className="flex items-center gap-4 justify-end">
+              <Trash
+                className={cn(index > 0 ? "cursor-pointer" : "hidden")}
+                onClick={() => remove(index)}
+              />
+
+              <ChevronDown
+                className={cn(
+                  isCollapsed[index] ? "rotate-180" : "rotate-0",
+                  "cursor-pointer"
+                )}
+                onClick={() => handleCollapseToggle(index)}
+              />
+            </div>
             {!isCollapsed[index] && (
               <div key={item.id} className="space-y-6">
                 <FormField
@@ -204,58 +219,7 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
                 />
 
                 <div className="">
-                  {item.links.map((link: object, linkIndex: number) => (
-                    <div key={linkIndex + 3}>
-                      <div key={linkIndex} className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name={`courseData.${index}.links.${linkIndex}.title`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <div className="flex items-center justify-between">
-                                <FormLabel className="text-primary">
-                                  Link {linkIndex + 1}
-                                </FormLabel>
-                                <Button
-                                  onClick={() =>
-                                    handleLinkDelete(index, linkIndex)
-                                  }
-                                  className={cn("cursor-pointer")}
-                                  variant={"outline"}
-                                  disabled={linkIndex === 0}
-                                >
-                                  <Trash size={20} />
-                                </Button>
-                              </div>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter Link Title"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name={`courseData.${index}.links.${linkIndex}.url`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter Link Url"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  ))}
+                  <NestedLinkArray nestedIndex={index} form={form} />
                 </div>
               </div>
             )}

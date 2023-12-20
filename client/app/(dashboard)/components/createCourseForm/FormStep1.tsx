@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { useFieldArray } from "react-hook-form";
 
 interface Props {
@@ -18,20 +18,26 @@ interface Props {
   form: any;
 }
 
-const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
-  const { fields: benefitsField, append: benefitsAppend } = useFieldArray({
+const FormStep1 = ({ handleNextClick, handlePrevClick, form }: Props) => {
+  const {
+    fields: benefitsField,
+    append: benefitsAppend,
+    remove: removeBenefits,
+  } = useFieldArray({
     name: "benefits",
     control: form.control,
   });
-  const { fields: prerequisitesField, append: prerequisitesAppend } =
-    useFieldArray({
-      name: "prerequisites",
-      control: form.control,
-    });
+  const {
+    fields: prerequisitesField,
+    append: prerequisitesAppend,
+    remove: removePrerequisites,
+  } = useFieldArray({
+    name: "prerequisites",
+    control: form.control,
+  });
 
   const handleAddBenefits = async () => {
     const isValidbenefits = await form.trigger("benefits");
-    console.log(isValidbenefits, "benefits");
     if (isValidbenefits) {
       benefitsAppend({ title: "" });
     }
@@ -39,20 +45,24 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
 
   const handleAddPrerequisites = async () => {
     const isValidPrerequisites = await form.trigger("prerequisites");
-    console.log(isValidPrerequisites);
     if (isValidPrerequisites) {
       prerequisitesAppend({ title: "" });
     }
   };
 
-  const NextValidation = () => {};
+  const NextValidation = async () => {
+    const isValid = await form.trigger(["benefits", "prerequisites"]);
+    if (isValid) {
+      handleNextClick();
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div className="">
         <FormLabel className="text-primary">Course Benefits</FormLabel>
         {benefitsField?.map((benefit, index) => (
-          <div key={benefit.id} className="mb-4">
+          <div key={benefit.id} className="mb-4 flex gap-2">
             <div className="grow">
               <FormField
                 control={form.control}
@@ -70,6 +80,11 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
                 )}
               />
             </div>
+            {index > 0 && (
+              <Button variant={"outline"} onClick={() => removeBenefits(index)}>
+                <Trash />
+              </Button>
+            )}
           </div>
         ))}
         <Button variant={"outline"} onClick={handleAddBenefits}>
@@ -80,8 +95,8 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
       <div className="">
         <FormLabel className="text-primary">Course Prerequisites</FormLabel>
         {prerequisitesField.map((prere, index) => (
-          <div key={prere.id} className="mb-4">
-            <div className="">
+          <div key={prere.id} className="mb-4 flex gap-2">
+            <div className="grow">
               <FormField
                 control={form.control}
                 name={`prerequisites.${index}.title`}
@@ -98,6 +113,14 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
                 )}
               />
             </div>
+            {index > 0 && (
+              <Button
+                variant={"outline"}
+                onClick={() => removePrerequisites(index)}
+              >
+                <Trash />
+              </Button>
+            )}
           </div>
         ))}
 
@@ -118,4 +141,4 @@ const CourseOption = ({ handleNextClick, handlePrevClick, form }: Props) => {
   );
 };
 
-export default CourseOption;
+export default FormStep1;

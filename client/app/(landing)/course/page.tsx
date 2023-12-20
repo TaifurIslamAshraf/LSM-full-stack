@@ -4,7 +4,7 @@ const Page = () => {
   return (
     <div>
       <Protected>
-        <h1>Hello people</h1>
+        <div className="">hello</div>
       </Protected>
     </div>
   );

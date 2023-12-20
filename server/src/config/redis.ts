@@ -1,10 +1,11 @@
 import { Redis } from "ioredis";
 
 import config from "./config";
+import { logger } from "./logger";
 
 const redisClient = () => {
   if (config.redisUrl) {
-    console.log("Redis is connected");
+    logger.info("Redis is connected");
     return config.redisUrl;
   }
 

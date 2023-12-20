@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -21,6 +22,7 @@ interface Props {
 
 const CourseInfo = ({ handleNextClick, handlePrevClick, form }: Props) => {
   const [thumbnailPreview, setThumbnailPreview] = useState<any>("");
+  const thumbnailImg = form.watch("thumbnail");
 
   const handleChangeThumbnail = (e: any) => {
     const file = e.target.files[0];
@@ -47,6 +49,7 @@ const CourseInfo = ({ handleNextClick, handlePrevClick, form }: Props) => {
       "demoUrl",
       "thumbnail",
     ]);
+    console.log(stepValid);
 
     if (stepValid) {
       handleNextClick();
@@ -180,34 +183,37 @@ const CourseInfo = ({ handleNextClick, handlePrevClick, form }: Props) => {
           </FormItem>
         )}
       />
-      <FormField
-        control={form.control}
-        name="thumbnail"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-primary">Course Thumbnail</FormLabel>
-            <FormControl>
-              <Input
-                onChange={handleChangeThumbnail}
-                className="w-full min-h-[10vh]"
-                type="file"
-                accept="image/jpeg,image/jpg,image/png,image/webp"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      {thumbnailPreview ? (
-        <Image
-          src={thumbnailPreview}
-          height={200}
-          width={500}
-          alt="thumbnail"
+      <div className="relative">
+        <FormField
+          control={form.control}
+          name="thumbnail"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-primary">Course Thumbnail</FormLabel>
+              <FormControl>
+                <Input
+                  onChange={handleChangeThumbnail}
+                  className={cn(thumbnailImg ? "min-h-[20vh]" : "min-h-[10vh]")}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      ) : (
-        ""
-      )}
+        {thumbnailImg ? (
+          <Image
+            src={thumbnailImg}
+            height={200}
+            width={100}
+            className="h-[20vh] w-[20vw] object-contain absolute top-[2rem] right-0"
+            alt="thumbnail"
+          />
+        ) : (
+          ""
+        )}
+      </div>
       <div className="flex items-center justify-end gap-4">
         <Button onClick={nextValidation} className="w-[60px]">
           Next

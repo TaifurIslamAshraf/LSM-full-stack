@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { ChevronDown, PlusCircle, Trash } from "lucide-react";
+import { ChevronDown, Pencil, PlusCircle, Trash } from "lucide-react";
 import { useState } from "react";
 import { FieldValues, useFieldArray } from "react-hook-form";
 import NestedLinkArray from "./NestedLinkArray";
@@ -39,9 +39,12 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
     control: form.control,
   });
 
+  const courseData = form.watch("courseData");
+
   const [isCollapsed, setIsCollapsed] = useState(
     Array(fields.length).fill(false)
   );
+
   const [activeSection, setActiveSection] = useState(1);
 
   const typedFields = fields as FieldValues[];
@@ -64,7 +67,12 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
     }
   };
 
-  const handleCollapseToggle = (index: number) => {};
+  const handleCollapseToggle = (index: number) => {
+    const updatedCollapsed = [...isCollapsed];
+    updatedCollapsed[index] = !updatedCollapsed[index];
+
+    setIsCollapsed(updatedCollapsed);
+  };
 
   // all function here
   //   const handleDeleteContent = (index: number) => {
@@ -140,7 +148,6 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
   //when click next its tregar validation function
   const NextValidation = async () => {
     const isStepValid = await form.trigger("courseData");
-    console.log(isStepValid);
 
     if (isStepValid) {
       handleNextClick();
@@ -150,9 +157,47 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
   return (
     <div>
       {typedFields?.map((item, index: number) => {
+        const isShowVideoSectionInp =
+          index === 0 ||
+          courseData[index].videoSection !== courseData[index - 1].videoSection;
+
         return (
           <>
-            <div key={item.id} className="flex items-center gap-4 justify-end">
+            {isShowVideoSectionInp && (
+              <div
+                key={index * 10}
+                className={cn(
+                  isShowVideoSectionInp ? "mt-6" : "mt-0",
+                  "bg-transparent flex items-center"
+                )}
+              >
+                <FormField
+                  name={`courseData.${index}.videoSection`}
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <input
+                          className={cn(
+                            "outline-none text-xl bg-transparent",
+                            courseData[index].videoSection ===
+                              "Untitled Section"
+                              ? "w-[170px]"
+                              : "w-min"
+                          )}
+                          type="text"
+                          {...field}
+                          placeholder="Video Section Name"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Pencil />
+              </div>
+            )}
+            <div className="flex items-center gap-4 justify-end">
               <Trash
                 className={cn(index > 0 ? "cursor-pointer" : "hidden")}
                 onClick={() => remove(index)}
@@ -166,6 +211,21 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
                 onClick={() => handleCollapseToggle(index)}
               />
             </div>
+
+            <div className="">
+              {isCollapsed[index] && (
+                <>
+                  {courseData[index].videoTitle ? (
+                    <p>
+                      {index + 1}. {courseData[index].videoTitle}
+                    </p>
+                  ) : (
+                    <p>You Dont have video title</p>
+                  )}
+                </>
+              )}
+            </div>
+
             {!isCollapsed[index] && (
               <div key={item.id} className="space-y-6">
                 <FormField
@@ -230,12 +290,16 @@ const FormStep2 = ({ handleNextClick, handlePrevClick, form }: Props) => {
       <Button
         className="gap-2 mt-10 text-center w-full"
         onClick={addNewVideoSection}
+        variant={"outline"}
       >
         <PlusCircle />
         <span>Add New Section</span>
       </Button>
 
-      <Button onClick={NextValidation}>Next</Button>
+      <div className="flex items-center justify-end mt-10 gap-6">
+        <Button onClick={handlePrevClick}>Previous</Button>
+        <Button onClick={NextValidation}>Next</Button>
+      </div>
     </div>
   );
 };

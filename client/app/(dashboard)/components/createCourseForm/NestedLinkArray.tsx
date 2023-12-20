@@ -42,7 +42,7 @@ const NestedLinkArray = ({ nestedIndex, form }: INestedProps) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="">
       {fields.map((link, linkIndex) => (
         <div key={link.id}>
           <div key={linkIndex} className="space-y-4">

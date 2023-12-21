@@ -10,15 +10,15 @@ const DashboardProtected = ({ children }: IChildren) => {
   const { user } = useSelector((state: any) => state.auth);
   const router = useRouter();
 
-  if (!user.role || !user.name) {
-    return <Suspense fallback={<Loading />} />;
-  }
-
   return (
     <>
-      {user.role !== "admin" && !user.name
-        ? router.replace("/login")
-        : children}
+      {user.role !== "admin" && !user.name ? (
+        <>
+          {router.replace("/login")} {<Suspense fallback={<Loading />} />}
+        </>
+      ) : (
+        children
+      )}
     </>
   );
 };

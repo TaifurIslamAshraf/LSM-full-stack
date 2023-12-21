@@ -10,11 +10,12 @@ const Protected = ({ children }: IChildren) => {
   const isAuthenticated = userAuth();
   const router = useRouter();
 
-  if (!isAuthenticated) {
-    <Suspense fallback={<Loading />} />;
-  }
-
-  return isAuthenticated ? children : router.replace("/login");
+  return (
+    <>
+      {!isAuthenticated && <Suspense fallback={<Loading />} />}
+      {isAuthenticated && children}
+      {!isAuthenticated && router.replace("/login")}
+    </>
+  );
 };
-
 export default Protected;
